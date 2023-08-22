@@ -1,20 +1,24 @@
 <head>
-<div class="container-xxl" >
-<h1>LOGIN</h1>
+    <link href="estilo.css" rel="stylesheet" />
 </head>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+<header>
+</header>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <body>
-<form method="POST" class="form-control" action="action_login.php">
-<label>
-USUARIO:</br>
-<input type="text" class="form-control" name ="nm_usuario" required/>
-<label>
-SENHA:</br>
-<input type="text" class="form-control" name ="senha" required/>
-</label>
-</br></br>
-<input type="submit" class="form-control" value="ENTRAR" required/>
-</form>
+    <div class="login" >
+        <div class="form_login" >
+            <h1>LOGIN</h1>
+            <form method="POST" class="form_login" action="action_login.php">
+                <label>
+                    USUARIO:
+                    <input type="text" class="form-control" name ="nm_usuario" required/>
+                </label>
+                <label>
+                    SENHA:
+                    <input type="text" class="form-control" name ="senha" required/>
+                </label>
+                    <input type="submit" class="form-control btn btn-primary" value="ENTRAR" required/>
+            </form>
+        </div>
+    </div>    
+</body>
