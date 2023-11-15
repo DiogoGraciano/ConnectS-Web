@@ -59,7 +59,7 @@ class ramalController extends controllerAbstract{
         $form->setDoisInputs($form->input("nm_usuario","Nome Usuario:",$dado->nm_usuario),
                             $form->input("senha","Senha:",$dado->senha)
         );
-        $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,"","3","12"));
+        $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
 
         $form->setButton($form->button("Salvar","btn_submit"));
         $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."ramal'"));

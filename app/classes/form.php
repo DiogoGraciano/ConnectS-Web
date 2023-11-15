@@ -78,6 +78,11 @@ class form extends pagina{
         $this->tplform->block("BLOCK_BUTTONS");
     }
 
+    public function setButtonNoForm($button){
+        $this->tplform->button_no = $button;
+        $this->tplform->block("BLOCK_BUTTONS_NO_FORM");
+    }
+
     public function show(){
         $this->tplform->block("BLOCK_END");
         $this->tplform->show();
@@ -100,7 +105,7 @@ class form extends pagina{
 
     }
 
-    public function checkbox($nm_input,$nm_label,$type_input="checkbox",$required=false,$class_input="form-check-input",$extra_input=""){
+    public function checkbox($nm_input,$nm_label,$required=false,$checked=false,$readonly=false,$value="on",$type_input="checkbox",$class_input="form-check-input",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -108,15 +113,23 @@ class form extends pagina{
         $tpl->nm_input = $nm_input;
         $tpl->nm_label = $nm_label;
         $tpl->class_input = $class_input;
-        if ($required == true)
-            $tpl->extra_input = $extra_input." required";
+        if ($required)
+            $extra_input = $extra_input.' required';
+        if ($checked) 
+            $extra_input = $extra_input.' checked';
+        if ($readonly) 
+            $extra_input = $extra_input.' onclick="return false;"';
+        if ($value) 
+            $extra_input = $extra_input.' value="'.$value.'"';
+
+        $tpl->extra_input = $extra_input;
 
         $tpl->block("BLOCK_CHECKBOX");  
         
         return $tpl->parse();
     }
     
-    public function input($nm_input,$nm_label,$vl_input="",$required=false,$placeholder="",$type_input="text",$class_input="form-control",$extra_input=""){
+    public function input($nm_input,$nm_label,$vl_input="",$required=false,$readonly=false,$placeholder="",$type_input="text",$class_input="form-control",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -127,14 +140,18 @@ class form extends pagina{
         $tpl->class_input = $class_input;
         $tpl->vl_input = $vl_input;
         if ($required == true)
-            $tpl->extra_input = $extra_input." required";
+            $extra_input = $extra_input." required";
+        if ($readonly == true)
+            $extra_input = $extra_input." readonly";
+        
+        $tpl->extra_input = $extra_input;
 
         $tpl->block("BLOCK_INPUT");   
 
         return $tpl->parse();
     }
 
-    public function textarea($nm_input,$nm_label,$vl_input,$required=false,$placeholder="",$rows_input="10",$cols_input="10",$class_input="form-control",$extra_input=""){
+    public function textarea($nm_input,$nm_label,$vl_input,$required=false,$readonly=false,$placeholder="",$rows_input="10",$cols_input="10",$class_input="form-control",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 
@@ -144,7 +161,10 @@ class form extends pagina{
         $tpl->class_input = $class_input;
         $tpl->vl_input = $vl_input;
         if ($required == true)
-            $tpl->extra_input = $extra_input." required";
+            $extra_input = $extra_input." required";
+        if ($readonly == true)
+            $extra_input = $extra_input." readonly";
+        $tpl->extra_input = $extra_input;
         $tpl->rows_input = $rows_input;
         $tpl->cols_input = $cols_input;
 
@@ -153,7 +173,7 @@ class form extends pagina{
         return $tpl->parse();
     }
 
-    public function select($nm_label,$nm_input,array $options,$vl_option="",$required=false,$class_input="form-control",$extra_input=""){
+    public function select($nm_label,$nm_input,array $options,$vl_option="",$required=false,$class_input="form-select",$extra_input=""){
 
         $tpl= $this->getTemplate("elements_template.html");
 

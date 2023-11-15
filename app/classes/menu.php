@@ -10,6 +10,9 @@ class menu extends pagina{
 
         $this->getTemplate("../templates/menu.html");
         $this->tpl->titulo = $titulo;
+        $mensagem = new mensagem;
+        $this->tpl->mensagem = $mensagem->show(false);
+        
         foreach ($menus as $menu){
             $this->tpl->url_menu = $menu->url_menu;
             $this->tpl->titulo_menu = $menu->titulo_menu; 

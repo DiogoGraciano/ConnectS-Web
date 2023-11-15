@@ -83,7 +83,7 @@ class conexaoController extends controllerAbstract{
         $form->setDoisInputs($form->input("nm_usuario","Nome Usuario:",$dado->nm_usuario),
                             $form->input("senha","Senha:",$dado->senha)
         );
-        $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,"","3","12"));
+        $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
 
         $form->setButton($form->button("Salvar","btn_submit"));
         $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."conexao'"));
@@ -135,6 +135,8 @@ class conexaoController extends controllerAbstract{
                 $erros = ($db->getError());
                 mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
                 mensagem::addErro($erros);
+                header("Location: ".$this->url."conexao/manutencao/".$cd_conexao);
+                exit;
             }
 
         }
@@ -162,6 +164,8 @@ class conexaoController extends controllerAbstract{
                 $erros = ($db->getError());
                 mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
                 mensagem::addErro($erros);
+                header("Location: ".$this->url."conexao/manutencao");
+                exit;
             }
         }
         elseif($cddelete && !$cd_cliente && !$id_conexao && !$nm_terminal && !$nm_programa){
@@ -176,6 +180,8 @@ class conexaoController extends controllerAbstract{
                 $erros = ($db->getError());
                 mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
                 mensagem::addErro($erros);
+                header("Location: ".$this->url."conexao/index");
+                exit;
             }
 
         }else{

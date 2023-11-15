@@ -44,7 +44,7 @@ class clienteController extends controllerAbstract{
 
         $form->setHidden("cd",$cd);
         $form->setDoisInputs($form->input("nome","Nome:",$dado->nm_cliente,true),
-                            $form->input("nrloja","Loja:",$dado->nr_loja,true,"","number","form-control",'min="1"')
+                            $form->input("nrloja","Loja:",$dado->nr_loja,true,false,"","number","form-control",'min="1"')
         );
         $form->setButton($form->button("Salvar","btn_submit"));
         $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."cliente'"));
