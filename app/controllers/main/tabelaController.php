@@ -46,7 +46,7 @@ class tabelaController extends controllerAbstract{
             return $coluna;
     }
 
-    private function getColuna($coluna){
+    private function getNomeColuna($coluna){
         if ($key = array_search($coluna,$this::nomes))
             return $this::nomes[$key];
         else 
@@ -193,6 +193,11 @@ class tabelaController extends controllerAbstract{
                         $resultados = $db->selectColumns($colunas_selecionada);
 
                         if ($resultados){
+
+                            if (!file_exists("Arquivos/")){
+                                mkdir("Arquivos/",777);
+                            }
+
                             $arquivo  = fopen('Arquivos/Relatorio.csv', "w");
                             $nome = "Relatorio.csv";
 
@@ -225,7 +230,49 @@ class tabelaController extends controllerAbstract{
 
                 }
                 elseif ($this->getList("modo") == "importar"){
+                    $tmpName = $_FILES["file"]["tmp_name"];
+                    if(($arquivo = fopen($tmpName, 'r')) !== FALSE) {
+                        
+                        $data = fgetcsv($arquivo, 10000, ',');
+                        $db = new db($tabela[1]);
+                        $colunas_db = $db->getColumns();
+                        $colunas = [];
+                        $tb = $db->getObject();
+                        $i = 0;
+                        $c = 0;
+                        $r = 0;
 
+                        foreach ($data as $row){
+                            $r++;
+                            if ($i == 0){
+                                foreach ($row as $coluna){
+                                    $colunas[$coluna] = $this->getNomeColuna($coluna);
+                                }
+                                $i++;
+                                continue;
+                            } 
+                            foreach ($row as $value){
+                                if (array_search($colunas[$c],$colunas_db)){
+                                    $tb->$colunas[$c] = $value;
+                                    $c++;
+                                }
+                                else {
+                                    Mensagem::setErro(array("Coluna ({$this->getNomeAmigavel($colunas[$c])}) não encontrada na Tabela {$tabela[1]} na linha ".$r));
+                                    header("location: ".$this->url."tabela/tabela_importar");
+                                }
+                            }
+                            $db->store($tb);
+                        }
+
+                        fclose($arquivo);
+
+                        Mensagem::setSucesso(array("Exportado com sucesso"));
+                        header("location: ".$this->url."tabela/tabela_importar");
+
+                    }else{
+                        Mensagem::setErro(array("Não foi possivel fazer a leitura do arquivo, tente novamente."));
+                        header("location: ".$this->url."tabela/tabela_importar");
+                    }
                 }
             }else{
                 Mensagem::setErro(array("Modo não informado"));
@@ -234,7 +281,7 @@ class tabelaController extends controllerAbstract{
         }
         catch (Exception $e){
             Mensagem::setErro(array($e->getMessage()));
-            return $this->url."exportar";
+            return $this->url."tabela";
         }
     }
 }
