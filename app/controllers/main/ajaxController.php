@@ -1,24 +1,27 @@
 <?php
 namespace app\controllers\main;
-use app\db\db;
-use app\classes\mensagem;
+
+use app\classes\functions;
 use app\classes\controllerAbstract;
+
+header('Content-Type: application/json; charset=utf-8');
 
 class ajaxController extends controllerAbstract{
 
-    public function call($parameters){
-        $method = $parameters[0];
-        unset($parameters[0]);
-        $parameter = "";
-        if (array_key_exists(1,$parameters))
-            $parameter = $parameters;
-        if (method_exists($this,$method)){
-            $this->$method($parameter);
+    public function index(){
+        $method = functions::getValue("method");
+        $parameters = functions::getValue("parameters");
+        if ($method){
+            if (method_exists($this,$method)){
+                $this->$method($parameters);
+            }
         }
     }
 
     public function teste($teste){
-        var_dump(json_decode($teste[1]));
+        $retorno = ["sucesso" => False,
+                    "retorno" => $teste];
+        echo json_encode($retorno);
     }
 }
 

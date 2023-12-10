@@ -15,3 +15,20 @@ $(document).ready(function(){
     });
   });
 
+// $(document).ready(function() {
+//   $.ajax({
+//     type: "POST",
+//     url: "http://www.programa.net.br/ajax",
+//     data: {"method":"teste","parameters":["dado2"]},
+//     success: function (response) {
+//       if (response.sucesso) {
+//           alert(response.retorno);
+//       }else{
+//           alert("erro");                    
+//       }
+//     },
+//   });
+// });
+
+
+

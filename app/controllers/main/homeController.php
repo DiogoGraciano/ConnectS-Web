@@ -20,7 +20,7 @@ class homeController extends controllerAbstract{
                        $menu->getMenu($this->url."usuario","Usuario"),
                        $menu->getMenu($this->url."tabela","Exportar/Importar"),
                        $menu->getMenu($this->url."home/deslogar","Deslogar"),
-                       $menu->getMenu($this->url."ajax/call/teste/teste","Ajax"));
+                       $menu->getMenu($this->url."teste.php","Ajax"));
         $menu->show("Menu",$menus);
 
         $footer = new footer;
