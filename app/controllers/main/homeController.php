@@ -7,7 +7,6 @@ use app\classes\controllerAbstract;
 
 class homeController extends controllerAbstract{
 
-
     public function index(){
 
         $head = new head();
@@ -17,11 +16,11 @@ class homeController extends controllerAbstract{
         $menus = array($menu->getMenu($this->url."agendamento","Agendamento"),
                        $menu->getMenu($this->url."cliente","Cliente"),
                        $menu->getMenu($this->url."conexao","Conexão"),
-                       $menu->getMenu($this->url."login","Login"),
                        $menu->getMenu($this->url."ramal","Ramal"),
                        $menu->getMenu($this->url."usuario","Usuario"),
                        $menu->getMenu($this->url."tabela","Exportar/Importar"),
-                       $menu->getMenu($this->url."home/deslogar","Deslogar"));
+                       $menu->getMenu($this->url."home/deslogar","Deslogar"),
+                       $menu->getMenu($this->url."ajax/call/teste/teste","Ajax"));
         $menu->show("Menu",$menus);
 
         $footer = new footer;

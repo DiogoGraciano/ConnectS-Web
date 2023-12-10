@@ -48,7 +48,7 @@ class tabelaController extends controllerAbstract{
 
     private function getNomeColuna($coluna){
         if ($key = array_search($coluna,$this::nomes))
-            return $this::nomes[$key];
+            return $key;
         else 
             return False;
     }
@@ -158,7 +158,7 @@ class tabelaController extends controllerAbstract{
 
             $form = new form("Adicione o Arquivo para Importação",$this->url."tabela/action/importar/".$tabela[0]);
 
-                $form->setInputs($form->input("file","Arquivo para Importação:","",false,false,"","file"));
+                $form->setInputs($form->input("arquivo","Arquivo para Importação:","",false,false,"","file"));
 
                 $form->setButton($form->button("Executar","btn_carregar","submit"));
                 $form->setButtonNoForm($form->button("Voltar","btn_voltar","buttom","btn btn-dark pt-2 btn-block","location.href='".$this->url."tabela/tabela_importar'"));
@@ -204,7 +204,7 @@ class tabelaController extends controllerAbstract{
                             fputcsv($arquivo, $culunas_amigaveis);
 
                             foreach ($resultados as $resultado){
-                                fputcsv($arquivo, (array)$resultado);
+                                fputcsv($arquivo, (array)$resultado,";");
                             }
 
                             fclose($arquivo);
@@ -229,51 +229,51 @@ class tabelaController extends controllerAbstract{
                     }
 
                 }
-                elseif ($this->getList("modo") == "importar"){
-                    $tmpName = $_FILES["file"]["tmp_name"];
+                elseif ($tabela[0] == "importar"){
+                    $tmpName = $_FILES["arquivo"]["tmp_name"];
                     if(($arquivo = fopen($tmpName, 'r')) !== FALSE) {
-                        
-                        $data = fgetcsv($arquivo, 10000, ',');
-                        $db = new db($tabela[1]);
-                        $colunas_db = $db->getColumns();
-                        $colunas = [];
-                        $tb = $db->getObject();
                         $i = 0;
-                        $c = 0;
-                        $r = 0;
-
-                        foreach ($data as $row){
-                            $r++;
-                            if ($i == 0){
-                                foreach ($row as $coluna){
-                                    $colunas[$coluna] = $this->getNomeColuna($coluna);
+                        $rows = [];
+                        while (($data = fgetcsv($arquivo, 1000, ";")) !== FALSE) {
+                            $rows[] = $data;
+                        } 
+                            $db = new db($tabela[1]);
+                            $colunas_db = $db->getColumns();
+                            $colunas = [];
+                            $tb = $db->getObject();
+                            $r = 1;
+                            foreach ($rows as $data){
+                                $c = 0;
+                                foreach ($data as $coluna){
+                                    if ($i == 0){
+                                        $colunas[] = $this->getNomeColuna($coluna);
+                                        continue;
+                                    } 
+                                    if (in_array($colunas[$c],$colunas_db)){
+                                        $col = $colunas[$c];
+                                        $tb->$col = $coluna;
+                                        $c++;
+                                    }
+                                    else {
+                                        Mensagem::setErro(array("Coluna ({$this->getNomeAmigavel($colunas[$c])}) não encontrada na Tabela {$tabela[1]} na linha ".$r));
+                                        header("location: ".$this->url."tabela/tabela_importar");
+                                        return;
+                                    }
+                                    $db->store($tb);  
                                 }
+                                $r++;
                                 $i++;
-                                continue;
-                            } 
-                            foreach ($row as $value){
-                                if (array_search($colunas[$c],$colunas_db)){
-                                    $tb->$colunas[$c] = $value;
-                                    $c++;
-                                }
-                                else {
-                                    Mensagem::setErro(array("Coluna ({$this->getNomeAmigavel($colunas[$c])}) não encontrada na Tabela {$tabela[1]} na linha ".$r));
-                                    header("location: ".$this->url."tabela/tabela_importar");
-                                }
                             }
-                            $db->store($tb);
+                            
+                            fclose($arquivo);
+
+                            Mensagem::setSucesso(array("Exportado com sucesso"));
+                            header("location: ".$this->url."tabela/tabela_importar");
                         }
-
-                        fclose($arquivo);
-
-                        Mensagem::setSucesso(array("Exportado com sucesso"));
-                        header("location: ".$this->url."tabela/tabela_importar");
-
                     }else{
                         Mensagem::setErro(array("Não foi possivel fazer a leitura do arquivo, tente novamente."));
                         header("location: ".$this->url."tabela/tabela_importar");
                     }
-                }
             }else{
                 Mensagem::setErro(array("Modo não informado"));
                 header("location: ".$this->url."tabela/tabela_importar");

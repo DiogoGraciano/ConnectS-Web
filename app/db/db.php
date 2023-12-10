@@ -34,6 +34,27 @@ class Db
            return false;
     }
 
+    public function transaction(){
+        if ($this->pdo->beginTransaction())
+            return True;
+        else 
+            $this->error[] = "Erro: Não foi possivel iniciar a transação";
+    }
+
+    public function commit(){
+        if ($this->pdo->commit())
+            return True;
+        else 
+            $this->error[] = "Erro: Não foi possivel finalizar a transação";
+    }
+
+    public function rollback(){
+        if ($this->pdo->rollback())
+            return True;
+        else 
+            $this->error[] = "Erro: Não foi possivel desafazer a transação";
+    }
+
     //Retorna o ultimo ID da tabela
     private function getlastId()
     {

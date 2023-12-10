@@ -1,28 +1,26 @@
 <body>
-    <container class="col-md-12">
-        <section class="row d-flex justify-content-center align-items-center w-100">
-            <div class="col-md-3">
-                <div class="col-md-12 d-flex justify-content-center">
-                    <h1>LOGIN</h1>
-                </div>
-                <form method="POST" action="{caminho}{action_login}">
-                    <div class="col-md-12">
-                        <label for="nm_usuario">USUARIO:</label>
-                        <input type="text" class="form-control" name="nm_usuario" id="nm_usuario" required/>     
-                        <label for="nm_usuario">SENHA:</label>
-                        <input type="text" class="form-control" name="senha"  id="senha" required/>
-                        <!-- BEGIN BLOCK_ESQUECI -->
-                        <a href="{caminho}{action_esqueci}">Esqueci minha senha</a> 
-                        <!-- END BLOCK_ESQUECI -->
-                    </div>
-                    <div class="col-md-12 mt-2 d-flex justify-content-center">
-                        <input type="submit" class="btn btn-primary w-100" value="ENTRAR"/> 
-                    </div>    
-                    <div class="col-md-12 mt-2">
-                        {mensagem}
-                    <div class="col-md-12 mt-2">
-                </form>  
+    <section class="row d-flex h-100 justify-content-center align-items-center w-100">
+        <div class="col-md-3">
+            <div class="col-md-12 d-flex justify-content-center">
+                <h1>LOGIN</h1>
             </div>
-        </section>
-    </container>
+            <form method="POST" action="{caminho}{action_login}">
+                <div class="col-md-12">
+                    <label for="nm_usuario">USUARIO:</label>
+                    <input type="text" class="form-control" name="nm_usuario" id="nm_usuario" required/>     
+                    <label for="nm_usuario">SENHA:</label>
+                    <input type="text" class="form-control" name="senha"  id="senha" required/>
+                    <!-- BEGIN BLOCK_ESQUECI -->
+                    <a href="{caminho}{action_esqueci}">Esqueci minha senha</a> 
+                    <!-- END BLOCK_ESQUECI -->
+                </div>
+                <div class="col-md-12 mt-2 d-flex justify-content-center">
+                    <input type="submit" class="btn btn-primary w-100" value="ENTRAR"/> 
+                </div>    
+                <div class="col-md-12 mt-2">
+                    {mensagem}
+                <div class="col-md-12 mt-2">
+            </form>  
+        </div>
+    </section>
 </body>
