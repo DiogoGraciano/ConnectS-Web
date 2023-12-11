@@ -19,7 +19,7 @@ $(document).ready(function(){
 //   $.ajax({
 //     type: "POST",
 //     url: "http://www.programa.net.br/ajax",
-//     data: {"method":"teste","parameters":["dado2"]},
+//     data: {"method":"getEndereco","parameters":"88817380"},
 //     success: function (response) {
 //       if (response.sucesso) {
 //           alert(response.retorno);
