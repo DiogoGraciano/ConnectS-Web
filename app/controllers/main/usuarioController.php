@@ -1,12 +1,11 @@
 <?php 
 namespace app\controllers\main;
 use app\classes\head;
-use app\db\db;
 use app\classes\form;
 use app\classes\consulta;
 use app\classes\controllerAbstract;
-use app\classes\Mensagem;
 use app\classes\footer;
+use app\models\main\usuarioModel;
 
 class usuarioController extends controllerAbstract{
 
@@ -36,8 +35,6 @@ class usuarioController extends controllerAbstract{
     }
     public function manutencao($parameters){
 
-        $db = new db("tb_usuario");
-
         $cd = "";
 
         if ($parameters)
@@ -46,10 +43,7 @@ class usuarioController extends controllerAbstract{
         $head = new head;
         $head->show("Manutenção Usuario");
 
-        if ($cd)
-            $dado = $db->selectOne($cd);
-        else
-            $dado = $db->getObject();
+        $dado = usuarioModel::get($cd);
 
         $form = new form("Manutenção Usuario",$this->url."usuario/action/".$cd);
 
@@ -90,112 +84,26 @@ class usuarioController extends controllerAbstract{
     }
     public function action($parameters){
     
-        if ($parameters)
-            $cddelete = $parameters[0];
+        if ($parameters){
+            usuarioModel::delete($parameters[0]);
+            $this->go("usuario");
+            return;
+        }
         
-        $cd = filter_input(INPUT_POST, 'cd');
-        $cd_cliente = filter_input(INPUT_POST, 'cd_cliente');
-        $nm_terminal = filter_input(INPUT_POST, 'nm_terminal');
-        $nm_sistema = filter_input(INPUT_POST, 'nm_sistema');
-        $nm_usuario = filter_input(INPUT_POST, 'nm_usuario');
-        $senha = filter_input(INPUT_POST, 'senha');
-        $obs = filter_input(INPUT_POST, 'obs');
-
-        $db = new db("tb_usuario");
-
-        if($cd && $cd_cliente && $nm_terminal && $nm_usuario && $nm_usuario && $senha){
+        $cd = $this->getValue('cd');
+        $cd_cliente = $this->getValue('cd_cliente');
+        $nm_terminal = $this->getValue('nm_terminal');
+        $nm_sistema = $this->getValue('nm_sistema');
+        $nm_usuario = $this->getValue('nm_usuario');
+        $senha = $this->getValue('senha');
+        $obs = $this->getValue('obs');
         
-            $values = $db->getObject();
-
-            $values->cd_usuario = $cd;
-            $values->cd_cliente = $cd_cliente;
-            $values->nm_terminal= $nm_terminal;
-            $values->nm_sistema = $nm_sistema;
-            $values->nm_usuario = $nm_usuario;
-            $values->senha = $senha;
-            $values->obs= $obs;
-
-            if ($values)
-                $retorno = $db->store($values);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Criado com Sucesso"));
-                header("Location: ".$this->url."usuario");
-                exit;
-            }
-            else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($Mensagems);
-            }
-
-        }
-        elseif(!$cd && $cd_cliente && $nm_terminal && $nm_usuario && $nm_usuario && $senha){
-            $values = $db->getObject();
-
-            $values->cd_cliente = $cd_cliente;
-            $values->nm_terminal= $nm_terminal;
-            $values->nm_sistema = $nm_sistema;
-            $values->nm_usuario = $nm_usuario;
-            $values->senha = $senha;
-            $values->obs= $obs;
-
-            if ($values)
-                $retorno = $db->store($values);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
-                header("Location: ".$this->url."usuario");
-                exit;
-            }
-            else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro($Mensagems);
-            }
-        }
-        elseif($cddelete && !$cd_cliente && !$nm_terminal && !$nm_usuario && !$nm_usuario && !$senha){
-            $retorno = $db->delete($cddelete);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Excluido com Sucesso"));
-                header("Location:".$this->url."usuario");
-                exit;
-            }
-            else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($Mensagems);
-            }
-
-        }else{
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            header("Location: ".$this->url."usuario/index/".$cddelete);
-            exit;
-        }
+        usuarioModel::set($cd_cliente,$nm_terminal,$nm_sistema,$nm_usuario,$senha,$obs,$cd);
     }
+
     public function export(){
-        $db = new db("tb_usuario");
-        $results = $db->selectInstruction("select 
-        cd_usuario,tb_usuario.cd_cliente,nm_cliente,nr_loja,nm_usuario,nm_terminal,nm_sistema,senha,obs 
-        from tb_usuario 
-        inner join tb_cliente on tb_cliente.cd_cliente = tb_usuario.cd_cliente;");
-
-        if($results){
-
-            $arquivo  = fopen('Clientes.csv', "w");
-           
-	        fputcsv($arquivo, array("CODIGO","CODIGO CLIENTE","NOME CLIENTE","LOJA","TERMINAL","SISTEMA","USUARIO","SENHA","OBS"));
-            
-            foreach ($results as $result){
-                $array = array($result->cd_usuario,$result->cd_cliente,$result->nm_cliente,$result->nr_loja,$result->nm_terminal,$result->nm_sistema,$result->nm_usuario,$result->senha,$result->obs);
-                fputcsv($arquivo, $array);  
-                $array = [];
-            }
-
-            fclose($arquivo);
-
-            header('Location: '.$this->url.'Clientes.csv');
-        }
+        $this->go("tabela/exportar/tb_usuario");
     }
+    
 }
 

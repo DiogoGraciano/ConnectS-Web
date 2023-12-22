@@ -1,12 +1,11 @@
 <?php 
 namespace app\controllers\main;
 use app\classes\head;
-use app\db\db;
 use app\classes\form;
 use app\classes\consulta;
 use app\classes\controllerAbstract;
-use app\classes\mensagem;
 use app\classes\footer;
+use app\models\main\conexaoModel;
 
 class conexaoController extends controllerAbstract{
 
@@ -39,18 +38,13 @@ class conexaoController extends controllerAbstract{
 
         $cd = "";
 
-        $db = new db("tb_conexao");
-
         if ($parameters)
             $cd = $parameters[0];
 
         $head = new head;
         $head->show("Manutenção Conexão");
 
-        if ($cd)
-            $dado = $db->selectOne($cd);
-        else
-            $dado = $db->getObject();
+        $dado = conexaoModel::get($cd);
 
         $form = new form("Manutenção Conexão",$this->url."conexao/action/".$cd);
 
@@ -94,101 +88,29 @@ class conexaoController extends controllerAbstract{
     }
     public function action($parameters){
 
-        if ($parameters)
-            $cddelete = $parameters[0];
-
-        $cd_conexao = filter_input(INPUT_POST, 'cd');
-        $cd_cliente = filter_input(INPUT_POST, 'cd_cliente');
-        $id_conexao = filter_input(INPUT_POST, 'id_conexao');
-        $nm_terminal = filter_input(INPUT_POST, 'nm_terminal');
-        $nr_caixa = filter_input(INPUT_POST, 'nr_caixa');
-        $nm_programa = filter_input(INPUT_POST, 'nm_programa');
-        $nm_usuario = filter_input(INPUT_POST, 'nm_usuario');
-        $senha = filter_input(INPUT_POST, 'senha');
-        $obs = filter_input(INPUT_POST, 'obs');
-
-        $db = new db("tb_conexao");
-
-        if($cd_conexao && $cd_cliente && $id_conexao && $nm_terminal && $nm_programa){
-        
-            $values = $db->getObject();
-
-            $values->cd_conexao = $cd_conexao;
-            $values->cd_cliente = $cd_cliente;
-            $values->id_conexao = $id_conexao;
-            $values->nm_terminal= $nm_terminal;
-            $values->nm_programa = $nm_programa;
-            $values->nr_caixa = $nr_caixa;
-            $values->nm_usuario = $nm_usuario;
-            $values->senha = $senha;
-            $values->obs= $obs;
-
-            if ($values)
-                $retorno = $db->store($values);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
-                header("Location: ".$this->url."conexao/manutencao/".$cd_conexao);
-                exit;
-            }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-                header("Location: ".$this->url."conexao/manutencao/".$cd_conexao);
-                exit;
-            }
-
+        if ($parameters){
+            conexaoModel::delete($parameters[0]);
+            $this->go("conexao");
+            return;
         }
-        elseif(!$cd_conexao && $cd_cliente && $id_conexao && $nm_terminal && $nm_programa){
-            $values = $db->getObject();
 
-            $values->cd_cliente = $cd_cliente;
-            $values->id_conexao = $id_conexao;
-            $values->nm_terminal= $nm_terminal;
-            $values->nm_programa = $nm_programa;
-            $values->nr_caixa = $nr_caixa;
-            $values->nm_usuario = $nm_usuario;
-            $values->senha = $senha;
-            $values->obs= $obs;
+        $cd_conexao = $this->getValue('cd');
+        $cd_cliente = $this->getValue('cd_cliente');
+        $id_conexao = $this->getValue('id_conexao');
+        $nm_terminal = $this->getValue('nm_terminal');
+        $nr_caixa = $this->getValue('nr_caixa');
+        $nm_programa = $this->getValue('nm_programa');
+        $nm_usuario = $this->getValue('nm_usuario');
+        $senha = $this->getValue('senha');
+        $obs = $this->getValue('obs');
 
-            if ($values)
-                $retorno = $db->store($values);
+        conexaoModel::set($cd_cliente,$id_conexao,$nm_terminal,$nr_caixa,$nm_programa,$nm_usuario,$senha,$obs,$cd_conexao);
 
-            if ($retorno == true){
-                mensagem::setSucesso(array("Criado com Sucesso"));
-                header("Location: ".$this->url."conexao/manutencao");
-                exit;
-            }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-                header("Location: ".$this->url."conexao/manutencao");
-                exit;
-            }
-        }
-        elseif($cddelete && !$cd_cliente && !$id_conexao && !$nm_terminal && !$nm_programa){
-            $retorno = $db->delete($cddelete);
+        $this->go("cliente/manutencao/".$cd_conexao);
+    }
 
-            if ($retorno == true){
-                mensagem::setSucesso(array("Excluido com Sucesso"));
-                header("Location: ".$this->url."conexao/index");
-                exit;
-            }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-                header("Location: ".$this->url."conexao/index");
-                exit;
-            }
-
-        }else{
-            mensagem::setErro(array("Erro ao excultar ação tente novamente"));
-            header("Location: ".$this->url."conexao/index");
-            exit;
-        }
+    public function export(){
+        $this->go("tabela/exportar/tb_conexao");
     }
 
 }

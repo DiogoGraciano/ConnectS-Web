@@ -10,8 +10,8 @@ header('Content-Type: application/json; charset=utf-8');
 class ajaxController extends controllerAbstract{
 
     public function index(){
-        $method = functions::getValue("method");
-        $parameters = functions::getValue("parameters");
+        $method = $this->getValue("method");
+        $parameters = $this->getValue("parameters");
         if ($method){
             if (method_exists($this,$method)){
                 $this->$method($parameters);

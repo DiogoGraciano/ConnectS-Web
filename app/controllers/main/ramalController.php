@@ -1,12 +1,11 @@
 <?php 
 namespace app\controllers\main;
 use app\classes\head;
-use app\db\db;
 use app\classes\form;
 use app\classes\consulta;
 use app\classes\controllerAbstract;
-use app\classes\Mensagem;
 use app\classes\footer;
+use app\models\main\ramalModel;
 
 class ramalController extends controllerAbstract{
 
@@ -31,8 +30,7 @@ class ramalController extends controllerAbstract{
         $footer->show();
     }
     public function manutencao($parameters){
-        $db = new db("tb_ramal");
-
+    
         $cd = "";
 
         if ($parameters)
@@ -41,10 +39,7 @@ class ramalController extends controllerAbstract{
         $head = new head;
         $head->show("Manutenção Ramal");
 
-        if ($cd)
-            $dado = $db->selectOne($cd);
-        else
-            $dado = $db->getObject();
+        $dado = ramalModel::get($cd);
 
         $form = new form("Manutenção Ramal",$this->url."ramal/action/".$cd);
 
@@ -70,95 +65,26 @@ class ramalController extends controllerAbstract{
     }
     public function action($parameters){
 
-        if ($parameters)
-            $cddelete = $parameters[0];
-
-        $cd_ramal = filter_input(INPUT_POST, 'cd_ramal');
-        $nr_ramal = filter_input(INPUT_POST, 'nr_ramal');
-        $nm_funcionario = filter_input(INPUT_POST, 'nm_funcionario');
-        $nr_telefone = filter_input(INPUT_POST, 'nr_telefone');
-        $nr_ip = filter_input(INPUT_POST, 'nr_ip');
-        $nm_usuario = filter_input(INPUT_POST, 'nm_usuario');
-        $senha = filter_input(INPUT_POST, 'senha');
-        $obs = filter_input(INPUT_POST, 'obs');
-
-        $db = new db("tb_ramal");
-
-        if($cd_ramal && $nr_ramal){
-   
-        $values = $db->getObject();
-
-        $values->cd_ramal = $cd_ramal;
-        $values->nr_ramal = $nr_ramal;
-        $values->nm_funcionario = $nm_funcionario;
-        $values->nr_telefone= $nr_telefone;
-        $values->nr_ip = $nr_ip;
-        $values->nm_usuario = $nm_usuario;
-        $values->senha = $senha;
-        $values->obs= $obs;
-
-        if ($values)
-            $retorno = $db->store($values);
-
-        if ($retorno == true){
-            mensagem::setSucesso(array("Atualizado com Sucesso"));
-            header("Location: ".$this->url."ramal/manutencao/".$cd_ramal);
-            exit;
-        }
-        else {
-            $Mensagems = ($db->getError());
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            mensagem::addErro($Mensagems);
-            header("Location: ".$this->url."ramal/manutencao/".$cd_ramal);
+        if ($parameters){
+            ramalModel::delete($parameters[0]);
+            $this->go("ramal");
+            return;
         }
 
-        }
-        elseif(!$cd_ramal && $nr_ramal){
-            $values = $db->getObject();
+        $cd_ramal = $this->getValue('cd_ramal');
+        $nr_ramal = $this->getValue('nr_ramal');
+        $nm_funcionario = $this->getValue('nm_funcionario');
+        $nr_telefone = $this->getValue('nr_telefone');
+        $nr_ip = $this->getValue('nr_ip');
+        $nm_usuario = $this->getValue('nm_usuario');
+        $senha = $this->getValue('senha');
+        $obs = $this->getValue('obs');
 
-            $values->cd_ramal = $cd_ramal;
-            $values->nr_ramal = $nr_ramal;
-            $values->nm_funcionario = $nm_funcionario;
-            $values->nr_telefone= $nr_telefone;
-            $values->nr_ip = $nr_ip;
-            $values->nm_usuario = $nm_usuario;
-            $values->senha = $senha;
-            $values->obs= $obs;
-
-            if ($values)
-                $retorno = $db->store($values);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Adicionado com Sucesso"));
-                header("Location: ".$this->url."ramal/manutencao/");
-                exit;
-            }
-            else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($Mensagems);
-                header("Location: ".$this->url."ramal/manutencao/");
-            }
-        }
-        elseif($cddelete && !$cd_ramal && !$nr_ramal){
-            $retorno = $db->delete($cddelete);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Excluido com Sucesso"));
-                header("Location: ".$this->url."ramal/index/");
-                exit;
-            }
-            else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($Mensagems);
-                header("Location: ".$this->url."ramal/index/");
-            }
-
-        }else{
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            header("Location: ".$this->url."ramal/index/".$cddelete);
-            exit;
-        }
+        ramalModel::set($nr_ramal,$nm_funcionario,$nr_telefone,$nr_ip,$nm_usuario,$senha,$obs,$cd_ramal);
+        $this->go("ramal/manutenção".$cd_ramal);
     }   
+
+    public function export(){
+        $this->go("tabela/exportar/tb_ramal");
+    }
 }

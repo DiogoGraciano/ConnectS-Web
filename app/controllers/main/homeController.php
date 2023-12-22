@@ -4,6 +4,7 @@ use app\classes\head;
 use app\classes\menu;
 use app\classes\footer;
 use app\classes\controllerAbstract;
+use app\models\main\loginModel;
 
 class homeController extends controllerAbstract{
 
@@ -27,7 +28,7 @@ class homeController extends controllerAbstract{
         $footer->show();
     }
     public function deslogar(){
-        session_destroy();
-        header("location: ".$this->url."login");
+        loginModel::deslogar();
+        $this->go("login");
     }
 }

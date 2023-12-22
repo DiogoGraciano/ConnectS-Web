@@ -1,12 +1,11 @@
 <?php 
 namespace app\controllers\main;
 use app\classes\head;
-use app\db\db;
 use app\classes\form;
 use app\classes\consulta;
-use app\classes\mensagem;
 use app\classes\footer;
 use app\classes\controllerAbstract;
+use app\models\main\clienteModel;
 
 class clienteController extends controllerAbstract{
 
@@ -16,7 +15,7 @@ class clienteController extends controllerAbstract{
         $head -> show("Cliente","consulta");
 
         $consulta = new consulta();
-        $buttons = array($consulta->getButton($this->url."home","Voltar"));
+        $buttons = array($consulta->getButton($this->url."home","Voltar"),$consulta->getButton($this->url."cliente/export","Exportar"));
         $columns = array($consulta->getColumns("10","ID","cd_cliente"),$consulta->getColumns("67","Nome","nm_cliente"),$consulta->getColumns("10","Loja","nr_loja"),$consulta->getColumns("13","Ações",""));
         $consulta->show("CONSULTA CLIENTES",$this->url."cliente/manutencao",$this->url."cliente/action",$buttons,$columns,"tb_cliente");
     
@@ -24,8 +23,6 @@ class clienteController extends controllerAbstract{
         $footer->show();
     }
     public function manutencao($parameters){
-
-        $db = new db("tb_cliente");
 
         $cd="";
 
@@ -35,12 +32,9 @@ class clienteController extends controllerAbstract{
         $head = new head;
         $head->show("Manutenção Cliente");
 
-        if ($cd)
-            $dado = $db->selectOne($cd);
-        else
-            $dado = $db->getObject();
-
-        $form = new form("Manutenção Cliente",$this->url."cliente/action/".$cd);
+        $dado = clienteModel::get($cd);
+        
+        $form = new form("Manutenção Cliente",$this->url."cliente/action/");
 
         $form->setHidden("cd",$cd);
         $form->setDoisInputs($form->input("nome","Nome:",$dado->nm_cliente,true),
@@ -55,100 +49,27 @@ class clienteController extends controllerAbstract{
     }
     public function action($parameters){
 
-        $db = new db("tb_cliente");
-
-        $cddelete="";
-
-        if ($parameters)
-            $cddelete = $parameters[0];
-
-        $cd = filter_input(INPUT_POST, 'cd');
-        $nome = filter_input(INPUT_POST, 'nome');
-        $nrloja = filter_input(INPUT_POST, 'nrloja');
-
-        if($cd && $nome && $nrloja){
- 
-            $values = $db->getObject();
-
-            $values->cd_cliente = $cd;
-            $values->nm_cliente= $nome;
-            $values->nr_loja = $nrloja;
-
-            if ($values)
-                $retorno = $db->store($values);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Criado com Sucesso"));
-                header("Location: ".$this->url."cliente/");
-                exit;
-            }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-            }
-
+        if ($parameters){
+            clienteModel::delete($parameters[0]);
+            $this->go("cliente");
+            return;
         }
-        elseif(!$cd && $nome && $nrloja){
-            $values = $db->getObject();
 
-            $values->nm_cliente= $nome;
-            $values->nr_loja = $nrloja;
+        $cd = $this->getValue('cd');
+        $nome = $this->getValue('nome');
+        $nrloja = $this->getValue('nrloja');
 
-            if ($values)
-                $retorno = $db->store($values);
+        clienteModel::set($nome,$nrloja,$cd);
 
-            if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
-                header("Location: ".$this->url."cliente/");
-                exit;
-            }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-            }
-        }
-        elseif($cddelete && !$nome && !$nrloja){
-
-            $retorno = $db->delete($cddelete);
-
-            if ($retorno == true){
-                mensagem::setSucesso(array("Excluido com Sucesso"));
-                header("Location: ".$this->url."cliente/");
-                exit;
-            }
-            else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
-            }
-
-        }else{
-            mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-            header("Location: ".$this->url."cliente/");
-            exit;
-        }
+        $this->go("cliente/manutencao/".$cd);
+        
     }
     public function export(){
-        $db = new db("tb_cliente");
-        $results = $db->selectAll();
-
-        if($results){
-
-            $arquivo  = fopen('Clientes.csv', "w");
-           
-	        fputcsv($arquivo, array("CODIGO","NOME CLIENTE","LOJA"));
-            
-            foreach ($results as $result){
-                $array = array($result->cd_cliente,$result->nm_cliente,$result->nr_loja);
-                fputcsv($arquivo, $array);  
-                $array = [];
-            }
-
-            fclose($arquivo);
-
-            header('Location: '.$this->url.'Clientes.csv');
-        }
+        
+        if (clienteModel::export())
+            $this->go('arquivos/Clientes.csv');
+        else 
+            $this->go("cliente");
+    
     }
 }
