@@ -1,7 +1,7 @@
 <?php
 namespace app\db;
 use app\db\configDB;
-
+use stdClass;
 
 class Db
 {
@@ -163,32 +163,74 @@ class Db
     }
 
     //Retorna um array com todos os registro da tabela
-    public function selectAll()
+    public function selectAll(Array $filters = array(),$order="")
     {
-        $object = $this->selectInstruction("select * from " . $this->table,true);
-
-        return $object;
-    }
-
-    //retorna um array com registros referentes a essas colunas
-    public function selectColumns(Array $columns)
-    {
-        $sql = "select ";
-        foreach ($columns as $column){
-            $sql .= $column.",";  
+        $sql = "SELECT * FROM " . $this->table;
+        if ($filters){
+            $sql .= " WHERE ";
+            $i = 1;
+            foreach ($filters as $filter){
+                if ($i == 1){
+                    $sql .= substr($filter,4);
+                    $i++;
+                }else{
+                    $sql .= $filter;
+                }
+            }    
         }
-        $sql = substr($sql, 0, -1);
-        $sql .= " from ".$this->table;    
+        $sql .= $order;
+        
         $object = $this->selectInstruction($sql,true);
 
         return $object;
     }
 
+    //retorna um array com registros referentes a essas colunas
+    public function selectColumns(Array $columns, Array $filters = array(), $order="")
+    {
+        $sql = "SELECT ";
+        foreach ($columns as $column){
+            $sql .= $column.",";  
+        }
+        $sql = substr($sql, 0, -1);
+        $sql .= " FROM ".$this->table;
+        if ($filters){
+            $sql .= "WHERE ";
+            $i = 1;
+            foreach ($filters as $filter){
+                if ($i == 1){
+                    $sql .= substr($filter,4);
+                    $i++;
+                }else{
+                    $sql .= $filter;
+                }
+            }    
+        }
+        $sql .= $order;
+        $object = $this->selectInstruction($sql,true);
+
+        return $object;
+    }
+
+    public function getFilter($column,$condition,$value,$operator="AND"){
+        if ($this->validInjection($value)){  
+            if (is_string($value) && $value != "null")
+                return " ".$operator." ".$column." ".$condition." '".$value."' ";
+            elseif (is_int($value) || is_float($value) || $value == "null")
+                return " ".$operator." ".$column." ".$condition." ".$value." ";  
+        }
+        return "";
+    }
+
+    public function getOrder($column,$order="DESC"){
+        return " ORDER by ".$column." ".$order;
+    }
+
     //faz um select com as colunas e os valores passados
-    public function selectByValues(Array $columns,array $values,$all=false){
+    public function selectByValues(Array $columns,array $values,$all=false,Array $filters = array(),$order = ""){
         if (count($columns) == count($values)){
             $conditions = [];
-            $sql = "select ";
+            $sql = "SELECT ";
             $i = 0;
             foreach ($columns as $column){
                 if (!$all)
@@ -210,12 +252,16 @@ class Db
             if ($all == true){
                 $sql .= " *";
             }
-            $sql .= " from ".$this->table;
-            $sql .= " where ";
+            $sql .= " FROM ".$this->table;
+            $sql .= " WHERE ";
             foreach ($conditions as $condition){
                 $sql .= $condition;
             }
             $sql = substr($sql, 0, -4);
+            foreach ($filters as $filter){
+                $sql .= $filter;
+            }
+            $sql .= $order; 
 
             $object = $this->selectInstruction($sql,true);
 

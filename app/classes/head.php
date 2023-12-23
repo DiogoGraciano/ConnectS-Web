@@ -6,7 +6,6 @@ use app\classes\functions;
 
 class head extends pagina{
 
-
     public function show($titulo="",$type="",){
 
         $this->getTemplate("head_template.html");
@@ -18,6 +17,9 @@ class head extends pagina{
         }
         elseif ($type=="consulta"){
             $this->tpl->block("BLOCK_CONSULTA");   
+        }
+        elseif ($type=="agenda"){
+            $this->tpl->block("BLOCK_AGENDA");   
         }
         
         $this->tpl->show();

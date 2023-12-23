@@ -81,7 +81,7 @@ class ramalController extends controllerAbstract{
         $obs = $this->getValue('obs');
 
         ramalModel::set($nr_ramal,$nm_funcionario,$nr_telefone,$nr_ip,$nm_usuario,$senha,$obs,$cd_ramal);
-        $this->go("ramal/manutenção".$cd_ramal);
+        $this->go("ramal/manutencao".$cd_ramal);
     }   
 
     public function export(){

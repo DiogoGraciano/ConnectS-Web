@@ -14,7 +14,7 @@ class homeController extends controllerAbstract{
         $head->show("Menu","");
 
         $menu = new menu();
-        $menus = array($menu->getMenu($this->url."agendamento","Agendamento"),
+        $menus = array($menu->getMenu($this->url."agenda","Agendamento"),
                        $menu->getMenu($this->url."cliente","Cliente"),
                        $menu->getMenu($this->url."conexao","Conexão"),
                        $menu->getMenu($this->url."ramal","Ramal"),

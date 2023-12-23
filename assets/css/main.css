@@ -71,3 +71,7 @@ html{
 button.btn.btn-dark.pt-2.btn-block {
     width: 100%;
 }
+
+.fc .fc-toolbar-title::first-letter {
+    text-transform: capitalize;
+}

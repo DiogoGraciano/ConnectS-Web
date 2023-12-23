@@ -7,7 +7,7 @@ use app\classes\modelAbstract;
 class clienteModel{
 
     public static function get($cd = ""){
-        modelAbstract::get("tb_cliente",$cd);
+        return modelAbstract::get("tb_cliente",$cd);
     }
 
     public static function set($nome,$nrloja,$cd = ""){
