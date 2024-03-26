@@ -1,27 +1,23 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\agenda;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 class agendaModel{
 
     public static function get($cd = ""){
-        return modelAbstract::get("tb_agendamento",$cd);
+        return (new agenda)->get($cd);
     }
 
     public static function getEvents($dt_inicio,$dt_fim){
-        $db = new db("tb_agendamento");
-        $results = $db->selectAll(array(
-            $db->getFilter("dt_inicio",">=",$dt_inicio),
-            $db->getFilter("dt_fim","<=",$dt_fim))
-        );
+        $agenda = new agenda;
+        $results = $agenda->addFilter("dt_inicio",">=",$dt_inicio)->addFilter("dt_fim","<=",$dt_fim)->selectAll();
 
-        $retorn = [];
+        $return = [];
 
         if ($results){
             foreach ($results as $result){
-                $retorn[] = [
+                $return[] = [
                     'id' => $result->cd_agenda,
                     'title' => $result->titulo,
                     'color' => $result->cor,
@@ -30,16 +26,16 @@ class agendaModel{
                 ];
             }
         }
-        return json_encode($retorn);
+        return json_encode($return);
     }
 
     public static function set($cd_cliente,$cd_funcionario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$cd_agenda){
 
-        $db = new db("tb_agendamento");
+        $agenda = new agenda;
 
         if($cd_agenda && $cd_cliente && $cd_funcionario && $titulo && $dt_inicio && $dt_fim){
         
-            $values = $db->getObject();
+            $values = $agenda->getObject();
 
             $values->cd_agenda = $cd_agenda;
             $values->cd_cliente = $cd_cliente;
@@ -51,22 +47,20 @@ class agendaModel{
             $values->obs= $obs;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $agenda->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
+                mensagem::setSucesso("Atualizado com Sucesso");
                 return True;
             }
             else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return False;
             }
 
         }
         elseif(!$cd_agenda && $cd_cliente && $cd_funcionario && $titulo && $dt_inicio && $dt_fim){
-            $values = $db->getObject();
+            $values = $agenda->getObject();
 
             $values->cd_cliente = $cd_cliente;
             $values->cd_funcionario = $cd_funcionario;
@@ -77,27 +71,25 @@ class agendaModel{
             $values->obs= $obs;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $agenda->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Criado com Sucesso"));
+                mensagem::setSucesso("Criado com Sucesso");
                 return True;
             }
             else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return False;
             }
         }
         else{
-            mensagem::setErro(array("Erro ao excultar ação tente novamente"));
+            mensagem::setErro("Erro ao excultar ação tente novamente");
             return False;
         }
     }
 
     public static function delete($cd){
-        modelAbstract::delete("tb_agendamento",$cd);
+        return (new agenda)->delete($cd);
     }
 
 }

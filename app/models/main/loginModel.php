@@ -1,25 +1,22 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\login;
 use app\classes\mensagem;
 
 class loginModel{
 
     public static function login($nm_usuario,$senha){
-        $db = new db("tb_login");
-        $colunas = array("nm_usuario");
-        $valores = array($nm_usuario);
-        $login = $db->selectByValues($colunas,$valores,true);
+        $login = new login;
+        $login = $login->get($nm_usuario,"nm_usuario");
 
         if ($login){
-            if (password_verify($senha,$login[0]->senha)){
-                $_SESSION["user"] = $login[0]->cd_login;
-                $_SESSION["nome"] = $login[0]->nm_usuario;
+            if (password_verify($senha,$login->senha)){
+                $_SESSION["user"] = $login->cd_login;
+                $_SESSION["nome"] = $login->nm_usuario;
                 return True;
             }
         }
-        mensagem::setErro(array("Usuario ou Senha invalido"));
-        mensagem::addErro(array($db->getError()));
+        mensagem::setErro("Usuario ou Senha invalido");
         return False;
         
     }

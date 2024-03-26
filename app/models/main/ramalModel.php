@@ -1,22 +1,25 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\ramal;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 class ramalModel{
 
     public static function get($cd = ""){
-        return modelAbstract::get("tb_ramal",$cd);
+        return (new ramal)->get($cd);
+    }
+
+    public static function getAll(){
+        return (new ramal)->getAll();
     }
 
     public static function set($nr_ramal,$nm_funcionario,$nr_telefone,$nr_ip,$nm_usuario,$senha,$obs,$cd_ramal = ""){
 
-        $db = new db("tb_ramal");
+        $ramal = new ramal;
 
         if($cd_ramal && $nr_ramal){
    
-            $values = $db->getObject();
+            $values = $ramal->getObject();
     
             $values->cd_ramal = $cd_ramal;
             $values->nr_ramal = $nr_ramal;
@@ -28,22 +31,20 @@ class ramalModel{
             $values->obs= $obs;
     
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $ramal->store($values);
     
             if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
+                mensagem::setSucesso("Atualizado com Sucesso");
                 return True;
             }
             else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($Mensagems);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return false;
             }
     
             }
         elseif(!$cd_ramal && $nr_ramal){
-            $values = $db->getObject();
+            $values = $ramal->getObject();
 
             $values->cd_ramal = $cd_ramal;
             $values->nr_ramal = $nr_ramal;
@@ -58,24 +59,22 @@ class ramalModel{
                 $retorno = $db->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Adicionado com Sucesso"));
+                mensagem::setSucesso("Adicionado com Sucesso");
                 return True;
             }
             else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($Mensagems);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return False;
             }
         }
         else{
-            mensagem::setErro(array("Erro ao excultar ação tente novamente"));
+            mensagem::setErro("Erro ao excultar ação tente novamente");
             return False;
         }
     }
 
     public static function delete($cd){
-        modelAbstract::delete("tb_ramal",$cd);
+        (new ramal)->delete($cd);
     }
 
 }

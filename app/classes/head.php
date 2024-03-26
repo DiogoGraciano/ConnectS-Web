@@ -6,11 +6,16 @@ use app\classes\functions;
 
 class head extends pagina{
 
-    public function show($titulo="",$type="",){
+    public function show($title="",$type="",$titulo=""){
 
         $this->getTemplate("head_template.html");
         $this->tpl->caminho = Functions::getUrlBase();
-        $this->tpl->title = $titulo;
+        $this->tpl->title = $title;
+        
+        if($titulo){
+            $this->tpl->titulo = $titulo;
+            $this->tpl->block("BLOCK_TITULO");
+        }
 
         if ($type=="grafico"){
             $this->tpl->block("BLOCK_GRAFICO");   

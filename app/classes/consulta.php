@@ -2,70 +2,93 @@
 
 namespace app\classes;
 use app\classes\pagina;
-use app\db\db;
 use app\classes\mensagem;
+use app\classes\elements;
 
 class consulta extends pagina{
 
-    public function show($titulo_pagina,$pagina_manutencao,$pagina_action,array $array_button, array $array_columns,$table_db,$sql_intruction=""){
+    private $columns = [];
+    private $buttons = [];
 
-        $db = new db($table_db);
+public function show($pagina_manutencao,$pagina_action,$dados,$coluna_action="id",$checkbox=false){
 
         $this->tpl = $this->getTemplate("consulta_template.html");
-
-        $this->tpl->titulo_pagina = $titulo_pagina;
-        $this->tpl->pagina_manutencao = $pagina_manutencao;
-        $this->tpl->pagina_action = $pagina_action;
         $mensagem = new mensagem;
         $this->tpl->mensagem = $mensagem->show(false);
+        $this->tpl->pagina_manutencao = $pagina_manutencao;
 
-        foreach ($array_button as $button){
-            $this->tpl->button_caminho = $button->caminho;
-            $this->tpl->button_nome = $button->nome;
+        foreach ($this->buttons as $button){
+            $this->tpl->button = $button;
             $this->tpl->block("BLOCK_BUTTONS");   
         }
 
-        $colunas_html = [];
-        foreach ($array_columns as $columns){
-            $this->tpl->columns_width = $columns->width;
-            $this->tpl->columns_name = $columns->nome;
-            $colunas_html[] = $columns->coluna;
-            $this->tpl->block("BLOCK_COLUMNS");   
+        if($this->isMobile())
+            $table = new tabelaMobile;
+        else{
+            $table = new tabela;
         }
 
-        $columns = $db->getColumns();
+        if ($checkbox){
+            if($this->isMobile())
+                $table->addColumns("1","Selecionar");
+            else
+                $table->addColumns("1","");
+        }
 
-        if (!$sql_intruction)
-            $dados = $db->selectAll();
-        else 
-            $dados = $db->selectInstruction($sql_intruction,true);
+        foreach ($this->columns as $columns){
+            $table->addColumns($columns->width,$columns->nome);
+        }
 
         if ($dados){
+            $i = 0;
             foreach ($dados as $data){
+                $row = [];
+                $b = 1;
+                $row_action = "";
                 foreach ($data as $key => $value){
-                    if (in_array($key,$colunas_html)){
-                        $this->tpl->data = $value;
-                        $this->tpl->block("BLOCK_DADOS");
-                    }  
-                    if ($key == $columns[0]){
-                        $this->tpl->cd_editar = $value;
-                        $this->tpl->cd_excluir = $value;
-                        $this->tpl->block("BLOCK_BUTTONS_TB");  
+                    if ($checkbox && $b == 1){
+                        $row[] = (new elements)->checkbox("id_check_".$i+1,false,false,false,false,$value);
+                        $b++;
                     }
+                    $row[] = $value;
+                    if ($key == $coluna_action){
+                        $row[] = '<button type="button" class="btn btn btn-primary">
+                                    <a href="'.$pagina_manutencao.'/'.functions::encrypt($value).'">Editar</a>
+                                </button>
+                                <button class="btn btn btn-primary" onclick="confirmaExcluir()" type="button">
+                                    <a href="'.$pagina_action.'/'.functions::encrypt($value).'">Excluir</a>
+                                </button>';
+                        $row_action = array_key_last($row);
+                    }
+                   
                 } 
-                $this->tpl->block('BLOCK_TABELA');
+                $row_buttoms = $row[$row_action];
+                unset($row[$row_action]);
+                $row[] = $row_buttoms;
+                $i++;
+                $table->addRow(array_values($row));
             }
+            $this->tpl->qtd_list = $i;
+            $this->tpl->table = $table->parse();
         }
+        else 
+            $this->tpl->block('BLOCK_SEMDADOS');
 
         $this->tpl->show();
     }
 
+    public function addColumns($width,$nome,$coluna){
 
-    public function getButton($caminho,$nome){
-        return json_decode('{"caminho":"'.$caminho.'","nome":"'.$nome.'"}');
+        $this->columns[] = json_decode('{"nome":"'.$nome.'","width":"'.$width.'%","coluna":"'.$coluna.'"}');
+
+        return $this;
     }
-    public function getColumns($width,$nome,$coluna){
-        return json_decode('{"nome":"'.$nome.'","width":"'.$width.'%","coluna":"'.$coluna.'"}');
+
+    public function addButtons($button){
+
+        $this->buttons[] = $button;
+
+        return $this;
     }
 
 }

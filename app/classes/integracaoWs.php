@@ -30,7 +30,7 @@ class integracaoWs{
                         $retorno->uf = $retornoWS->uf;
                         $retorno->logradouro = $retornoWS->tipo_logradouro." ".$retornoWS->logradouro;
                         $retorno->bairro = $retornoWS->bairro;
-                        $retorno->cidade = functions::utf8_urldecode($retornoWS->cidade);
+                        $retorno->localidade = functions::utf8_urldecode($retornoWS->cidade);
 
                         return $retorno;
                     }

@@ -1,22 +1,28 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\conexao;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 class conexaoModel{
 
     public static function get($cd = ""){
-        return modelAbstract::get("tb_conexao",$cd);
+        return (new conexao)->get($cd);
+    }
+
+    public static function getAll(){
+        return (new conexao)
+        ->addJoin("INNER","tb_cliente","tb_cliente.cd_cliente","tb_conexao.cd_cliente")
+        ->selectColumns("cd_conexao","nm_cliente","nr_loja","id_conexao","nm_terminal",
+                    "nr_caixa","nm_programa","nm_usuario","senha","obs");
     }
 
     public static function set($cd_cliente,$id_conexao,$nm_terminal,$nm_programa,$nr_caixa,$nm_usuario,$senha,$obs,$cd_conexao = ""){
 
-        $db = new db("tb_conexao");
+        $conexao = (new conexao);
 
         if($cd_conexao && $cd_cliente && $id_conexao && $nm_terminal && $nm_programa){
         
-            $values = $db->getObject();
+            $values = $conexao->getObject();
 
             $values->cd_conexao = $cd_conexao;
             $values->cd_cliente = $cd_cliente;
@@ -29,22 +35,20 @@ class conexaoModel{
             $values->obs= $obs;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $conexao->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
+                mensagem::setSucesso("Atualizado com Sucesso");
                 return True;
             }
             else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return False;
             }
 
         }
         elseif(!$cd_conexao && $cd_cliente && $id_conexao && $nm_terminal && $nm_programa){
-            $values = $db->getObject();
+            $values = $conexao->getObject();
 
             $values->cd_cliente = $cd_cliente;
             $values->id_conexao = $id_conexao;
@@ -56,43 +60,49 @@ class conexaoModel{
             $values->obs= $obs;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $conexao->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Criado com Sucesso"));
+                mensagem::setSucesso("Criado com Sucesso");
                 return True;
             }
             else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return False;
             }
         }
         else{
-            mensagem::setErro(array("Erro ao excultar ação tente novamente"));
+            mensagem::setErro("Erro ao excultar ação tente novamente");
             return False;
         }
     }
 
     public static function delete($cd){
-        modelAbstract::delete("tb_conexao",$cd);
+        $retorno = (new conexao)->delete($cd);
+
+        if ($retorno == true){
+            mensagem::setSucesso("Deletado com Sucesso");
+            return True;
+        }
+
+        mensagem::setErro("Falha ao deletar, tente novamente");
+        return False;
     }
 
     public static function export(){
-        $db = new db("tb_cliente");
-        $results = $db->selectAll();
+
+        $results = self::getAll();
 
         if($results){
 
-            $arquivo  = fopen('arquivos/Clientes.csv', "w");
+            $arquivo  = fopen('arquivos/conexao.csv', "w");
            
-	        fputcsv($arquivo, array("CODIGO","NOME CLIENTE","LOJA"));
+	        fputcsv($arquivo, array("CODIGO","NOME CLIENTE","LOJA","CONEXÃO","TERMINAL","CAIXA","PROGRAMA",
+            "USUARIO","SENHA","OBSERVAÇÕES"
+            ));
             
             foreach ($results as $result){
-                $array = array($result->cd_cliente,$result->nm_cliente,$result->nr_loja);
-                fputcsv($arquivo, $array);  
-                $array = [];
+                fputcsv($arquivo, array_values($result));  
             }
 
             fclose($arquivo);

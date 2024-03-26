@@ -5,31 +5,36 @@ use app\classes\form;
 use app\classes\consulta;
 use app\classes\controllerAbstract;
 use app\classes\footer;
+use app\classes\elements;
+use app\classes\functions;
 use app\models\main\conexaoModel;
 
 class conexaoController extends controllerAbstract{
 
     public function index(){
         $head = new head();
-        $head -> show("Conexão","consulta");
+        $head -> show("Conexão","consulta","Conexão");
 
-        $consulta = new consulta();
-        $buttons = array($consulta->getButton($this->url."home","Voltar"));
-        $columns = array($consulta->getColumns("15","NOME CLIENTE","nm_cliente"),
-                        $consulta->getColumns("2","LOJA","nr_loja"),
-                        $consulta->getColumns("10","CONEXÃO","id_conexao"),
-                        $consulta->getColumns("10","TERMINAL","nm_terminal"),
-                        $consulta->getColumns("2","CAIXA","nr_caixa"),
-                        $consulta->getColumns("10","PROGRAMA","nm_programa"),
-                        $consulta->getColumns("10","USUARIO","nm_usuario"),
-                        $consulta->getColumns("10","SENHA","senha"),
-                        $consulta->getColumns("10","OBSERVAÇÕES","obs"),
-                        $consulta->getColumns("12.5","AÇÕES",""));
+        $elements = new elements();
         
-        $consulta->show("CONSULTA CONEXÃO",$this->url."conexao/manutencao",$this->url."conexao/action",$buttons,$columns,"tb_conexao","select cd_conexao,
-        tb_conexao.cd_cliente,nm_cliente,nr_loja,id_conexao,nm_terminal,nr_caixa,nm_programa,nm_usuario,senha,obs 
-        from tb_conexao 
-        inner join tb_cliente on tb_cliente.cd_cliente = tb_conexao.cd_cliente");
+        $consulta = new consulta();
+        $consulta->addButtons($elements->button("Voltar","btn_submit","button","btn btn-dark pt-2","location.href='".$this->url."home'"))
+        ->addButtons($elements->button("Exportar","btn_voltar","button",
+        "btn btn-secondary pt-2","location.href='".$this->url."conexao/export'"));
+
+        $consulta->addColumns("1","ID","cd_cliente")
+                ->addColumns("15","NOME CLIENTE","nm_cliente")
+                ->addColumns("2","LOJA","nr_loja")
+                ->addColumns("10","CONEXÃO","id_conexao")
+                ->addColumns("10","TERMINAL","nm_terminal")
+                ->addColumns("2","CAIXA","nr_caixa")
+                ->addColumns("10","PROGRAMA","nm_programa")
+                ->addColumns("10","USUARIO","nm_usuario")
+                ->addColumns("10","SENHA","senha")
+                ->addColumns("10","OBSERVAÇÕES","obs")
+                ->addColumns("12.5","AÇÕES","");
+
+        $consulta->show($this->url."conexao/manutencao",$this->url."conexao/action",conexaoModel::getAll(),"cd_conexao");
 
         $footer = new footer;
         $footer->show();
@@ -39,48 +44,52 @@ class conexaoController extends controllerAbstract{
         $cd = "";
 
         if ($parameters)
-            $cd = $parameters[0];
+            $cd = functions::decrypt($parameters[0]);
 
         $head = new head;
-        $head->show("Manutenção Conexão");
+        $head->show("Manutenção Conexão",titulo:"Manutenção Conexão");
 
         $dado = conexaoModel::get($cd);
 
-        $form = new form("Manutenção Conexão",$this->url."conexao/action/".$cd);
+        $elements = new elements();
+
+        $form = new form($this->url."conexao/action/");
 
         $form->setHidden("cd",$cd);
 
-        $Terminais = array($form->getObjectOption("Balcão","Balcão"),
-                        $form->getObjectOption("Deposito","Deposito"),
-                        $form->getObjectOption("Escritorio","Escritorio"),
-                        $form->getObjectOption("Frente De Caixa","Frente De Caixa"),
-                        $form->getObjectOption("Servidor APP","Servidor APP"),
-                        $form->getObjectOption("Servidor Super","Servidor Super")
-        );
+        $elements->addOption("Balcão","Balcão")
+        ->addOption("Deposito","Deposito")
+        ->addOption("Escritorio","Escritorio")
+        ->addOption("Frente De Caixa","Frente De Caixa")
+        ->addOption("Servidor APP","Servidor APP")
+        ->addOption("Servidor Super","Servidor Super");
 
-        $Programas = array($form->getObjectOption("Anydesk","Anydesk"),
-                        $form->getObjectOption("Teamviwer","Teamviwer"),
-                        $form->getObjectOption("NetSuporte","NetSuporte"),
-                        $form->getObjectOption("Ruskdesk","Ruskdesk"),
-                        $form->getObjectOption("WTS","WTS"),
-                        $form->getObjectOption("Radmin","Radmin"),
-                        $form->getObjectOption("VNC","VNC")
-        );
+        $terminais = $elements->datalist("Terminais","nm_terminal",$dado->nm_terminal,true);
+       
+        $elements->addOption("Anydesk","Anydesk")
+            ->addOption("Teamviwer","Teamviwer")
+            ->addOption("NetSuporte","NetSuporte")
+            ->addOption("Ruskdesk","Ruskdesk")
+            ->addOption("WTS","WTS")
+            ->addOption("Radmin","Radmin")
+            ->addOption("VNC","VNC");
 
-        $form->setDoisInputs($form->input("id_conexao","Conexão:",$dado->id_conexao,true),      
-                            $form->input("nr_caixa","Caixa:",$dado->nr_caixa,false,"","number","form-control",'min="1"')
-        );
-        $form->setTresInputs($form->select("Cliente","cd_cliente",$form->getOptions("tb_cliente","cd_cliente","nm_cliente"),$dado->cd_cliente,true),
-                            $form->datalist("Terminais","nm_terminal",$Terminais,$dado->nm_terminal,true),
-                            $form->datalist("Programas","nm_programa",$Programas,$dado->nm_programa,true)
-        );
-        $form->setDoisInputs($form->input("nm_usuario","Nome Usuario:",$dado->nm_usuario),
-                            $form->input("senha","Senha:",$dado->senha)
-        );
-        $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
+        $programas = $elements->datalist("Programas","nm_programa",$dado->nm_programa,true);
 
-        $form->setButton($form->button("Salvar","btn_submit"));
-        $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."conexao'"));
+        $elements->setOptions("tb_cliente","cd_cliente","nm_cliente");
+        $cliente = $elements->select("Cliente","cd_cliente",$dado->cd_cliente,true);
+                
+        $form->setDoisInputs($elements->input("id_conexao","Conexão:",$dado->id_conexao,true),      
+                            $elements->input("nr_caixa","Caixa:",$dado->nr_caixa,false,false,"","number","form-control",'min="1"')
+        );
+        $form->setTresInputs($cliente,$terminais,$programas);
+        $form->setDoisInputs($elements->input("nm_usuario","Nome Usuario:",$dado->nm_usuario),
+                            $elements->input("senha","Senha:",$dado->senha)
+        );
+        $form->setInputs($elements->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
+
+        $form->setButton($elements->button("Salvar","btn_submit"));
+        $form->setButton($elements->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."conexao'"));
         $form->show();
 
         $footer = new footer;
@@ -89,7 +98,7 @@ class conexaoController extends controllerAbstract{
     public function action($parameters){
 
         if ($parameters){
-            conexaoModel::delete($parameters[0]);
+            conexaoModel::delete(functions::decrypt($parameters[0]));
             $this->go("conexao");
             return;
         }
@@ -106,11 +115,11 @@ class conexaoController extends controllerAbstract{
 
         conexaoModel::set($cd_cliente,$id_conexao,$nm_terminal,$nr_caixa,$nm_programa,$nm_usuario,$senha,$obs,$cd_conexao);
 
-        $this->go("cliente/manutencao/".$cd_conexao);
+        $this->go("conexao/manutencao/".$cd_conexao);
     }
 
     public function export(){
-        $this->go("tabela/exportar/tb_conexao");
+        conexaoModel::export();
     }
 
 }

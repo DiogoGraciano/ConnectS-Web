@@ -75,3 +75,8 @@ button.btn.btn-dark.pt-2.btn-block {
 .fc .fc-toolbar-title::first-letter {
     text-transform: capitalize;
 }
+
+button a {
+	color: white;
+	text-decoration: none;
+}

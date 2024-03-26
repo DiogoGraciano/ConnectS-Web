@@ -3,6 +3,9 @@
         "psr-4":{
             "app\\":"app",
             "core\\":"core"
-        }
+        },
+        "files": [
+            "app\\db\\table.php" 
+        ]
     }
 }

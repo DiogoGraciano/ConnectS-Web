@@ -1,75 +1,81 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\cliente;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 class clienteModel{
 
     public static function get($cd = ""){
-        return modelAbstract::get("tb_cliente",$cd);
+        return (new cliente)->get($cd);
+    }
+
+    public static function getAll(){
+        return (new cliente)->getAll();
     }
 
     public static function set($nome,$nrloja,$cd = ""){
 
-        $db = new db("tb_cliente");
+        $cliente = new cliente;
 
         if($cd && $nome && $nrloja){
  
-            $values = $db->getObject();
+            $values = $cliente->getObject();
 
             $values->cd_cliente = $cd;
             $values->nm_cliente= $nome;
             $values->nr_loja = $nrloja;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $cliente->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
+                mensagem::setSucesso("Atualizado com Sucesso");
                 return True;
             }
             else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return False;
             }
 
         }
         elseif(!$cd && $nome && $nrloja){
-            $values = $db->getObject();
+            $values = $cliente->getObject();
 
             $values->nm_cliente= $nome;
             $values->nr_loja = $nrloja;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $cliente->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Criado com Sucesso"));
+                mensagem::setSucesso("Criado com Sucesso");
                 return True;
             }
             else {
-                $erros = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
-                mensagem::addErro($erros);
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 return False;
             }
         }
         else{
-            mensagem::setErro(array("Erro ao excultar ação tente novamente"));
+            mensagem::setErro("Erro ao excultar ação tente novamente");
             return False;
         }
     }
 
     public static function delete($cd){
-        modelAbstract::delete("tb_cliente",$cd);
+        $retorno = (new cliente)->delete($cd);
+
+        if ($retorno == true){
+            mensagem::setSucesso("Deletado com Sucesso");
+            return True;
+        }
+
+        return False;
     }
 
     public static function export(){
-        $db = new db("tb_cliente");
-        $results = $db->selectAll();
+        $cliente = new cliente;
+        $results = $cliente->selectAll();
 
         if($results){
 

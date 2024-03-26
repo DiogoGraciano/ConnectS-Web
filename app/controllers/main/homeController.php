@@ -14,15 +14,15 @@ class homeController extends controllerAbstract{
         $head->show("Menu","");
 
         $menu = new menu();
-        $menus = array($menu->getMenu($this->url."agenda","Agendamento"),
-                       $menu->getMenu($this->url."cliente","Cliente"),
-                       $menu->getMenu($this->url."conexao","Conexão"),
-                       $menu->getMenu($this->url."ramal","Ramal"),
-                       $menu->getMenu($this->url."usuario","Usuario"),
-                       $menu->getMenu($this->url."tabela","Exportar/Importar"),
-                       $menu->getMenu($this->url."home/deslogar","Deslogar"));
+        $menu->getMenu($this->url."agenda","Agendamento")
+            ->getMenu($this->url."cliente","Cliente")
+            ->getMenu($this->url."conexao","Conexão")
+            ->getMenu($this->url."ramal","Ramal")
+            ->getMenu($this->url."usuario","Usuario")
+            ->getMenu($this->url."tabela","Exportar/Importar")
+            ->getMenu($this->url."home/deslogar","Deslogar");
                        
-        $menu->show("Menu",$menus);
+        $menu->show("Menu");
 
         $footer = new footer;
         $footer->show();

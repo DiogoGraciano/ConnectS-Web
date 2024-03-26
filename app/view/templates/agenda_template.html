@@ -4,33 +4,41 @@
       var calendarEl = document.getElementById('calendar');
   
       var calendar = new FullCalendar.Calendar(calendarEl, {
-        //themeSystem: 'bootstrap5',
         height: "auto",
         expandRows: true,
-        slotMinTime: '08:30',
-        slotMaxTime: '19:00',
+        timeZone: 'local',
+        initialDate: "{initial_date}",
+        slotDuration: '{slot_duration}',
         locale: 'pt-br',
         headerToolbar: {
           left: 'prevYear,prev,next,nextYear today',
-          center: 'title',
-          right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
+          center: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay',
+          right: 'title'
         },
         initialView: 'dayGridMonth',
+        longPressDelay: 500,
+        eventLongPressDelay: 500,
+        selectLongPressDelay: 500,
         selectable: true,
+        allDaySlot: true,
         dayMaxEvents: true,
         select: function(arg) {
-          window.location.href = "{action}" + btoa(arg.start) + "/" + btoa(arg.end);
+          let dataAtual = new Date();
+          if (arg.start > dataAtual)
+            window.location.href = "{action}" + btoa(arg.start).toString().replace("/","@") + "/" + btoa(arg.end).toString().replace("/","@");
+          else{
+            mensagem("Data menor que a data atual")
+            window.scroll({
+              top: 0,
+              left: 0,
+              behavior: "smooth",
+            });
+          }
         },
         eventClick: function(arg) {
+          if (arg.event.id)
             window.location.href = "{action}" + arg.event.id;
         }, 
-        
-        // allow "more" link when too many events
-        // multiMonthMaxColumns: 1, // guarantee single column
-        // showNonCurrentDates: true,
-        // fixedWeekCount: false,
-        // businessHours: true,
-        // weekends: false,
         events: {events}
       });
   
@@ -52,15 +60,19 @@
     });
 
   </script>
-    <div class="container">
-
-        <h2 class="mb-4 mt-4">{titulo}</h2>
+    <div class="px-2">
 
         <div id='calendar'></div>
 
         <div class="fixed-bottom mt-0">
-            {mensagem}
+          {mensagem}
         </div>
+
+        <!-- BEGIN BLOCK_BUTTON -->
+          <div class="col-md-12 d-flex justify-content-center mt-2">                          
+            {button}
+          </div>
+        <!-- END BLOCK_BUTTON -->
 
     </div>
 <!-- END BLOCK_CALENDARIO -->

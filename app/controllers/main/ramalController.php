@@ -5,26 +5,33 @@ use app\classes\form;
 use app\classes\consulta;
 use app\classes\controllerAbstract;
 use app\classes\footer;
+use app\classes\elements;
 use app\models\main\ramalModel;
 
 class ramalController extends controllerAbstract{
 
     public function index(){
         $head = new head();
-        $head -> show("Ramal","consulta");
+        $head->show("Ramal","consulta","Consulta Ramal");
     
         $consulta = new consulta();
-        $buttons = array($consulta->getButton($this->url,"Voltar"));
-        $columns = array($consulta->getColumns("20","FUNCIONARIO","nm_funcionario"),
-                        $consulta->getColumns("2","RAMAL","nr_ramal"),
-                        $consulta->getColumns("10","TELEFONE","nr_telefone"),
-                        $consulta->getColumns("10","IP","nr_ip"),
-                        $consulta->getColumns("10","USUARIO","nm_usuario"),
-                        $consulta->getColumns("10","SENHA","senha"),
-                        $consulta->getColumns("10","OBSERVAÇÕES","obs"),
-                        $consulta->getColumns("12.5","AÇÕES",""));
-        
-        $consulta->show("CONSULTA RAMAL",$this->url."ramal/manutencao",$this->url."ramal/action",$buttons,$columns,"tb_ramal");
+
+        $elements = new elements();
+
+        $consulta->addButtons($elements->button("Voltar","btn_voltar","button",
+        "btn btn-dark pt-2","location.href='".$this->url."home'"))
+        ->addButtons($elements->button("Exportar","btn_voltar","button",
+        "btn btn-secondary pt-2","location.href='".$this->url."cliente/export'"));
+        $consulta->addColumns("20","FUNCIONARIO","nm_funcionario")
+                    ->addColumns("2","RAMAL","nr_ramal")
+                    ->addColumns("10","TELEFONE","nr_telefone")
+                    ->addColumns("10","IP","nr_ip")
+                    ->addColumns("10","USUARIO","nm_usuario")
+                    ->addColumns("10","SENHA","senha")
+                    ->addColumns("10","OBSERVAÇÕES","obs")
+                    ->addColumns("12.5","AÇÕES","");
+
+        $consulta->show($this->url."ramal/manutencao",$this->url."ramal/action",ramalModel::getAll());
   
         $footer = new footer;
         $footer->show();
@@ -37,7 +44,9 @@ class ramalController extends controllerAbstract{
             $cd = $parameters[0];
 
         $head = new head;
-        $head->show("Manutenção Ramal");
+        $head->show("Manutenção Ramal",titulo:"Manutenção Ramal");
+
+        $elements = new elements();
 
         $dado = ramalModel::get($cd);
 
@@ -45,19 +54,19 @@ class ramalController extends controllerAbstract{
 
         $form->setHidden("cd_ramal",$cd);
 
-        $form->setDoisInputs($form->input("nm_funcionario","Funcionario:",$dado->nm_funcionario,true),
-                            $form->input("nr_ramal","Ramal:",$dado->nr_ramal,true,"","number","form-control",'min="1"'),            
+        $form->setDoisInputs($elements->input("nm_funcionario","Funcionario:",$dado->nm_funcionario,true),
+                            $elements->input("nr_ramal","Ramal:",$dado->nr_ramal,true,false,"","number","form-control",'min="1"'),            
         );
-        $form->setDoisInputs($form->input("nr_telefone","Telefone:",$dado->nr_telefone),
-                            $form->input("nr_ip","Numero IP:",$dado->nr_ip)
+        $form->setDoisInputs($elements->input("nr_telefone","Telefone:",$dado->nr_telefone),
+                            $elements->input("nr_ip","Numero IP:",$dado->nr_ip)
         );
-        $form->setDoisInputs($form->input("nm_usuario","Nome Usuario:",$dado->nm_usuario),
-                            $form->input("senha","Senha:",$dado->senha)
+        $form->setDoisInputs($elements->input("nm_usuario","Nome Usuario:",$dado->nm_usuario),
+                            $elements->input("senha","Senha:",$dado->senha)
         );
-        $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
+        $form->setInputs($elements->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
 
-        $form->setButton($form->button("Salvar","btn_submit"));
-        $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."ramal'"));
+        $form->setButton($elements->button("Salvar","btn_submit"));
+        $form->setButton($elements->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."ramal'"));
         $form->show();
 
         $footer = new footer;

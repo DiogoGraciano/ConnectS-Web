@@ -5,18 +5,28 @@ use app\classes\pagina;
 use app\classes\mensagem;
 use stdClass;
 
-class form extends pagina{
+class modal extends pagina{
 
     private $tplform;
 
     private $inputs_custom = [];
+
+    private $submit_this_form;
     
-    public function __construct($action)
+    public function __construct($action,$nome = "modal",$submit_this_form = false)
     {
-        $this->tplform = $this->getTemplate("form_template.html");
+        $this->submit_this_form = $submit_this_form;
+        $this->tplform = $this->getTemplate("modal_template.html");
         $mensagem = new mensagem;
         $this->tplform->mensagem = $mensagem->show(false);
-        $this->tplform->action = $action;
+        $this->tplform->nome_modal = $nome;
+        if ($this->submit_this_form){
+            $this->tplform->action = $action;
+            $this->tplform->block("BLOCK_FORM");
+        }
+        else{
+            $this->setHidden("actionConsulta".$nome,$action);
+        }
         $this->tplform->block("BLOCK_START");
     }
 
@@ -52,8 +62,6 @@ class form extends pagina{
         $custom->input = base64_encode($input);
 
         $this->inputs_custom[] = $custom;
-
-        return $this;
     }
 
     public function setDoisInputs($input,$input2,array $nomes = array("","")){
@@ -97,6 +105,8 @@ class form extends pagina{
     }
 
     public function show(){
+        if ($this->submit_this_form)
+            $this->tplform->block("BLOCK_END_FORM");
         $this->tplform->block("BLOCK_END");
         $this->tplform->show();
     }

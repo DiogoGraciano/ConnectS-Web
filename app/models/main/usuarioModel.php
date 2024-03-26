@@ -1,22 +1,25 @@
 <?php 
 namespace app\models\main;
-use app\db\db;
+use app\db\usuario;
 use app\classes\mensagem;
-use app\classes\modelAbstract;
 
 class usuarioModel{
 
     public static function get($cd = ""){
-        return modelAbstract::get("tb_usuario",$cd);
+        return (new usuario)->get($cd);
+    }
+
+    public static function getAll($cd){
+        return (new usuario)->getAll();
     }
 
     public static function set($cd_cliente,$nm_terminal,$nm_sistema,$nm_usuario,$senha,$obs,$cd = ""){
 
-        $db = new db("tb_usuario");
+        $usuario = new usuario;
 
         if($cd && $cd_cliente && $nm_terminal && $nm_usuario && $nm_usuario && $senha){
         
-            $values = $db->getObject();
+            $values = $usuario->getObject();
 
             $values->cd_usuario = $cd;
             $values->cd_cliente = $cd_cliente;
@@ -27,22 +30,22 @@ class usuarioModel{
             $values->obs= $obs;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $usuario->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Criado com Sucesso"));
+                mensagem::setSucesso("Criado com Sucesso");
                 return True;
             }
             else {
-                $Mensagems = ($db->getError());
-                mensagem::setErro(array("Erro ao execultar a ação tente novamente"));
+                $Mensagems = ($usuario->getError());
+                mensagem::setErro("Erro ao execultar a ação tente novamente");
                 mensagem::addErro($Mensagems);
                 return False;
             }
 
         }
         elseif(!$cd && $cd_cliente && $nm_terminal && $nm_usuario && $nm_usuario && $senha){
-            $values = $db->getObject();
+            $values = $usuario->getObject();
 
             $values->cd_cliente = $cd_cliente;
             $values->nm_terminal= $nm_terminal;
@@ -52,34 +55,33 @@ class usuarioModel{
             $values->obs= $obs;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $usuario->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso(array("Atualizado com Sucesso"));
+                mensagem::setSucesso("Atualizado com Sucesso");
                 return True;
             }
             else {
-                $Mensagems = ($db->getError());
                 mensagem::setErro($Mensagems);
                 return False;
             }
         }
         else{
-            mensagem::setErro(array("Erro ao excultar ação tente novamente"));
+            mensagem::setErro("Erro ao excultar ação tente novamente");
             return False;
         }
     }
 
     public static function delete($cd){
-        modelAbstract::delete("tb_usuario",$cd);
+        (new usuario)->delete($cd);
     }
 
     public function export(){
-        $db = new db("tb_usuario");
-        $results = $db->selectInstruction("select 
-        cd_usuario,tb_usuario.cd_cliente,nm_cliente,nr_loja,nm_usuario,nm_terminal,nm_sistema,senha,obs 
-        from tb_usuario 
-        inner join tb_cliente on tb_cliente.cd_cliente = tb_usuario.cd_cliente;");
+        $usuario = new usuario;
+        $results = $usuario
+        ->addJoin("INNER","tb_cliente","tb_cliente.cd_cliente","tb_usuario.cd_cliente")
+        ->selectColumns("cd_usuario","tb_usuario.cd_cliente","nm_cliente","nr_loja",
+                        "nm_usuario","nm_terminal","nm_sistema","senha","obs");
 
         if($results){
 

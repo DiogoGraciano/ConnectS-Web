@@ -4,6 +4,7 @@ use app\classes\head;
 use app\classes\form;
 use app\classes\agenda;
 use app\classes\controllerAbstract;
+use app\classes\elements;
 use app\classes\footer;
 use app\models\main\agendaModel;
 
@@ -11,10 +12,13 @@ class agendaController extends controllerAbstract{
 
     public function index(){
         $head = new head();
-        $head -> show("Conexão","agenda");
+        $head->show("Agenda","agenda","Agenda");
+
+        $elements = new elements();
 
         $agenda = new agenda();
-        $agenda->show("Agenda",$this->url."agenda/manutencao/",agendaModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year"))));
+        $agenda->addButton($elements->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."home'"));
+        $agenda->show($this->url."agenda/manutencao/",agendaModel::getEvents(date("Y-m-d H:i:s",strtotime("-1 Year")),date("Y-m-d H:i:s",strtotime("+1 Year"))));
       
         $footer = new footer;
         $footer->show();
@@ -33,29 +37,40 @@ class agendaController extends controllerAbstract{
             $cd = $parameters[0];
         
         $head = new head;
-        $head->show("Manutenção Agenda");
+        $head->show("Manutenção Agenda",titulo:"Manutenção Agenda");
 
         $dado = agendaModel::get($cd);
 
-        $form = new form("Manutenção Agenda",$this->url."agenda/action/");
+        $elements = new elements();
 
-        $status = array($form->getObjectOption("Em Andamento","Em Andamento"),
-                        $form->getObjectOption("Completo","Completo"),);
+        $form = new form($this->url."agenda/action/");
+
+        $elements->addOption("Em Andamento","Em Andamento")->addOption("Completo","Completo");
+
+        $status = $elements->select("Status","status ",$dado->status,true);
+
+        $elements->setOptions("tb_ramal","cd_ramal","nm_funcionario");
+        $funcionario = $elements->select("Funcionario","cd_funcionario",$dado->cd_funcionario,true);
+
+        $elements->setOptions("tb_cliente","cd_cliente","nm_cliente");
+        $cliente = $elements->select("Cliente","cd_cliente",$dado->cd_cliente,true);
 
         $form->setHidden("cd",$cd);
 
-        $form->setDoisInputs($form->input("cor","Cor:",$dado->cor,false,false,"","color","form-control form-control-color"),
-                            $form->input("titulo","Titulo:",$dado->titulo,true));
-        $form->setDoisInputs($form->select("Cliente","cd_cliente",$form->getOptions("tb_cliente","cd_cliente","nm_cliente"),$dado->cd_cliente,true),
-                            $form->select("Funcionario","cd_funcionario",$form->getOptions("tb_ramal","cd_ramal","nm_funcionario"),$dado->cd_funcionario,true),
-                            $form->select("Status","status ",$status,$dado->status,true)
-        );
-        $form->setDoisInputs($form->input("dt_inicio","Data Inicial:",$dado->dt_inicio?:$dt_ini,true,false,"","datetime-local","form-control form-control-date"),
-                            $form->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,false,"","datetime-local","form-control form-control-date"));
-        $form->setInputs($form->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
+        $form->setInputs($elements->input("cor","Cor:",$dado->cor,false,false,"","color","form-control form-control-color"));
 
-        $form->setButton($form->button("Salvar","btn_submit"));
-        $form->setButton($form->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."agenda'"));
+        $form->setTresInputs($cliente,
+                            $funcionario,
+                            $status               
+        );
+
+        $form->setDoisInputs($elements->input("dt_inicio","Data Inicial:",$dado->dt_inicio?:$dt_ini,true,false,"","datetime-local","form-control form-control-date"),
+                            $elements->input("dt_fim","Data Final:",$dado->dt_fim?:$dt_fim,true,false,"","datetime-local","form-control form-control-date"));
+        
+        $form->setInputs($elements->textarea("obs","Observações:",$dado->obs,false,false,"","3","12"));
+
+        $form->setButton($elements->button("Salvar","btn_submit"));
+        $form->setButton($elements->button("Voltar","btn_submit","button","btn btn-dark pt-2 btn-block","location.href='".$this->url."agenda'"));
         $form->show();
 
         $footer = new footer;
