@@ -115,7 +115,7 @@ class ramal extends db{
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $this->getObject(); ;
+        return $this->getObject();
     }
 
     public function getAll(){

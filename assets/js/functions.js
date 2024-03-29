@@ -61,6 +61,9 @@ $(document).ready(function(){
   $("#nm_terminal").on("blur",function(){validaVazio("#nm_terminal")});
   $("#nm_funcionario").on("blur",function(){validaVazio("#nm_funcionario")});
   $("#nr_ramal").on("blur",function(){validaVazio("#nr_ramal")});
+  $("#nr_ramal").on("blur",function(){validaVazio("#nr_ramal")});
+  $("#nm_usuario").on("blur",function(){validaVazio("#nm_usuario")});
+  $("#senha").on("blur",function(){validaVazio("#senha")});
 });
 
 // $(document).ready(function() {

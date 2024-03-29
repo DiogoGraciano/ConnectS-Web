@@ -22,7 +22,8 @@ class usuarioController extends controllerAbstract{
         $consulta->addButtons($elements->button("Voltar","btn_voltar","button","btn btn-dark pt-2","location.href='".$this->url."home'"))
                 ->addButtons($elements->button("Exportar","btn_voltar","button","btn btn-secondary pt-2","location.href='".$this->url."cliente/export'"));
 
-        $consulta->addColumns("15","NOME CLIENTE","nm_cliente")
+        $consulta->addColumns("1","ID","cd_cliente")
+                ->addColumns("15","NOME CLIENTE","nm_cliente")
                 ->addColumns("2","LOJA","nr_loja")
                 ->addColumns("10","TERMINAL","nm_terminal")
                 ->addColumns("10","SISTEMA","nm_sistema")

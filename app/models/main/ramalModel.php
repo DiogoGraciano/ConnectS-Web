@@ -17,6 +17,11 @@ class ramalModel{
 
         $ramal = new ramal;
 
+        if ($ramal->get($nm_funcionario,"nm_funcionario")->cd_ramal){
+            mensagem::setErro("Funcionario já existe");
+            return false;
+        };
+
         if($cd_ramal && $nr_ramal){
    
             $values = $ramal->getObject();
@@ -42,7 +47,7 @@ class ramalModel{
                 return false;
             }
     
-            }
+        }
         elseif(!$cd_ramal && $nr_ramal){
             $values = $ramal->getObject();
 
