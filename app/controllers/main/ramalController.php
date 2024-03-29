@@ -6,6 +6,7 @@ use app\classes\consulta;
 use app\classes\controllerAbstract;
 use app\classes\footer;
 use app\classes\elements;
+use app\classes\functions;
 use app\models\main\ramalModel;
 
 class ramalController extends controllerAbstract{
@@ -22,7 +23,8 @@ class ramalController extends controllerAbstract{
         "btn btn-dark pt-2","location.href='".$this->url."home'"))
         ->addButtons($elements->button("Exportar","btn_voltar","button",
         "btn btn-secondary pt-2","location.href='".$this->url."cliente/export'"));
-        $consulta->addColumns("20","FUNCIONARIO","nm_funcionario")
+        $consulta->addColumns("1","ID","cd_ramal")
+                    ->addColumns("20","FUNCIONARIO","nm_funcionario")
                     ->addColumns("2","RAMAL","nr_ramal")
                     ->addColumns("10","TELEFONE","nr_telefone")
                     ->addColumns("10","IP","nr_ip")
@@ -31,7 +33,7 @@ class ramalController extends controllerAbstract{
                     ->addColumns("10","OBSERVAÇÕES","obs")
                     ->addColumns("12.5","AÇÕES","");
 
-        $consulta->show($this->url."ramal/manutencao",$this->url."ramal/action",ramalModel::getAll());
+        $consulta->show($this->url."ramal/manutencao/",$this->url."ramal/action/",ramalModel::getAll(),"cd_ramal");
   
         $footer = new footer;
         $footer->show();
@@ -41,7 +43,7 @@ class ramalController extends controllerAbstract{
         $cd = "";
 
         if ($parameters)
-            $cd = $parameters[0];
+            $cd = functions::decrypt($parameters[0]);
 
         $head = new head;
         $head->show("Manutenção Ramal",titulo:"Manutenção Ramal");
@@ -50,7 +52,7 @@ class ramalController extends controllerAbstract{
 
         $dado = ramalModel::get($cd);
 
-        $form = new form("Manutenção Ramal",$this->url."ramal/action/".$cd);
+        $form = new form($this->url."ramal/action/");
 
         $form->setHidden("cd_ramal",$cd);
 
@@ -75,7 +77,7 @@ class ramalController extends controllerAbstract{
     public function action($parameters){
 
         if ($parameters){
-            ramalModel::delete($parameters[0]);
+            ramalModel::delete(functions::decrypt($parameters[0]));
             $this->go("ramal");
             return;
         }
@@ -90,7 +92,8 @@ class ramalController extends controllerAbstract{
         $obs = $this->getValue('obs');
 
         ramalModel::set($nr_ramal,$nm_funcionario,$nr_telefone,$nr_ip,$nm_usuario,$senha,$obs,$cd_ramal);
-        $this->go("ramal/manutencao".$cd_ramal);
+
+        $this->go("ramal/manutencao/".functions::encrypt($cd_ramal));
     }   
 
     public function export(){

@@ -56,7 +56,7 @@ class ramalModel{
             $values->obs= $obs;
 
             if ($values)
-                $retorno = $db->store($values);
+                $retorno = $ramal->store($values);
 
             if ($retorno == true){
                 mensagem::setSucesso("Adicionado com Sucesso");

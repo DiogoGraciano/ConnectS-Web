@@ -9,7 +9,7 @@ class usuarioModel{
         return (new usuario)->get($cd);
     }
 
-    public static function getAll($cd){
+    public static function getAll(){
         return (new usuario)->getAll();
     }
 

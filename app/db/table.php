@@ -7,15 +7,15 @@ class login extends db{
     }
 
     public function get($value="",$column="cd_login"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
-        else
-            $retorno = $this->getObject();
-
+    
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $retorno;
+        return $this->getObject(); ;
     }
 
     public function getAll(){
@@ -32,15 +32,15 @@ class agenda extends db{
     }
 
     public function get($value="",$column="cd_agenda"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
-        else
-            $retorno = $this->getObject();
-
+    
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $retorno;
+        return $this->getObject(); ;
     }
 
     public function getAll(){
@@ -57,15 +57,15 @@ class cliente extends db{
     }
 
     public function get($value="",$column="cd_cliente"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
-        else
-            $retorno = $this->getObject();
-
+    
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $retorno;
+        return $this->getObject(); ;
     }
 
     public function getAll(){
@@ -82,15 +82,15 @@ class conexao extends db{
     }
 
     public function get($value="",$column="cd_conexao"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
-        else
-            $retorno = $this->getObject();
-
+    
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $retorno;
+        return $this->getObject(); ;
     }
 
     public function getAll(){
@@ -106,23 +106,23 @@ class ramal extends db{
         parent::__construct("tb_ramal");
     }
 
-    public function get($value="",$column="tb_ramal"){
+    public function get($value="",$column="cd_ramal"){
+        $retorno = [];
+
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
-        else
-            $retorno = $this->getObject();
-
+    
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $retorno;
+        return $this->getObject(); ;
     }
 
     public function getAll(){
         return $this->selectAll();
     }
 
-    public function delete($value,$column="tb_ramal"){
+    public function delete($value,$column="cd_ramal"){
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
@@ -131,23 +131,23 @@ class usuario extends db{
         parent::__construct("tb_usuario");
     }
 
-    public function get($value="",$column="tb_usuario"){
+    public function get($value="",$column="cd_usuario"){
+        $retorno = [];
+        
         if ($value)
             $retorno = $this->addFilter($column,"=",$value)->selectAll();
-        else
-            $retorno = $this->getObject();
-
+    
         if (is_array($retorno) && count($retorno) == 1)
             return $retorno[0];
 
-        return $retorno;
+        return $this->getObject(); ;
     }
 
     public function getAll(){
         return $this->selectAll();
     }
 
-    public function delete($value,$column="tb_usuario"){
+    public function delete($value,$column="cd_usuario"){
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }

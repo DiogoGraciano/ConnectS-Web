@@ -58,26 +58,26 @@ class conexaoController extends controllerAbstract{
         $form->setHidden("cd",$cd);
 
         $elements->addOption("Balcão","Balcão")
-        ->addOption("Deposito","Deposito")
-        ->addOption("Escritorio","Escritorio")
-        ->addOption("Frente De Caixa","Frente De Caixa")
-        ->addOption("Servidor APP","Servidor APP")
-        ->addOption("Servidor Super","Servidor Super");
+                ->addOption("Deposito","Deposito")
+                ->addOption("Escritorio","Escritorio")
+                ->addOption("Frente De Caixa","Frente De Caixa")
+                ->addOption("Servidor APP","Servidor APP")
+                ->addOption("Servidor Super","Servidor Super");
 
         $terminais = $elements->datalist("Terminais","nm_terminal",$dado->nm_terminal,true);
        
         $elements->addOption("Anydesk","Anydesk")
-            ->addOption("Teamviwer","Teamviwer")
-            ->addOption("NetSuporte","NetSuporte")
-            ->addOption("Ruskdesk","Ruskdesk")
-            ->addOption("WTS","WTS")
-            ->addOption("Radmin","Radmin")
-            ->addOption("VNC","VNC");
+                ->addOption("Teamviwer","Teamviwer")
+                ->addOption("NetSuporte","NetSuporte")
+                ->addOption("Ruskdesk","Ruskdesk")
+                ->addOption("WTS","WTS")
+                ->addOption("Radmin","Radmin")
+                ->addOption("VNC","VNC");
 
         $programas = $elements->datalist("Programas","nm_programa",$dado->nm_programa,true);
 
         $elements->setOptions("tb_cliente","cd_cliente","nm_cliente");
-        $cliente = $elements->select("Cliente","cd_cliente",$dado->cd_cliente,true);
+        $cliente = $elements->select("Cliente","cd_cliente",$dado->cd_cliente);
                 
         $form->setDoisInputs($elements->input("id_conexao","Conexão:",$dado->id_conexao,true),      
                             $elements->input("nr_caixa","Caixa:",$dado->nr_caixa,false,false,"","number","form-control",'min="1"')
