@@ -7,6 +7,7 @@ use app\classes\mensagem;
 use app\classes\menu;
 use app\classes\footer;
 use app\classes\controllerAbstract;
+use app\classes\elements;
 use Exception;
 
 class tabelaController extends controllerAbstract{
@@ -58,11 +59,11 @@ class tabelaController extends controllerAbstract{
         $head->show("Importar/Exportar","");
 
         $menu = new menu();
-        $menus = array($menu->getMenu($this->url."tabela/tabela_exportar/","Exportar"),
-                       $menu->getMenu($this->url."tabela/tabela_importar/","Importar"),
-                       $menu->getMenu($this->url,"Voltar"));
+        $menu->addMenu($this->url."tabela/tabela_exportar/","Exportar")
+            ->addMenu($this->url."tabela/tabela_importar/","Importar")
+            ->addMenu($this->url,"Voltar");
         
-        $menu->show("Selecione o Modo",$menus);
+        $menu->show("Selecione o Modo");
 
         $footer = new footer;
         $footer->show();
@@ -73,13 +74,13 @@ class tabelaController extends controllerAbstract{
         $head->show("Selecione a tabela","");
 
         $menu = new menu();
-        $menus = array($menu->getMenu($this->url."tabela/importar/tb_cliente","Cliente"),
-                       $menu->getMenu($this->url."tabela/Importar/tb_conexao","Conexão"),
-                       $menu->getMenu($this->url."tabela/importar/tb_usuario","Usuario"),
-                       $menu->getMenu($this->url."tabela/importar/tb_ramal","Ramal"),
-                       $menu->getMenu($this->url."tabela","Voltar"));
+        $menu->addMenu($this->url."tabela/importar/tb_cliente","Cliente")
+            ->addMenu($this->url."tabela/Importar/tb_conexao","Conexão")
+            ->addMenu($this->url."tabela/importar/tb_usuario","Usuario")
+            ->addMenu($this->url."tabela/importar/tb_ramal","Ramal")
+            ->addMenu($this->url."tabela","Voltar");
         
-        $menu->show("Selecione a tabela",$menus);
+        $menu->show("Selecione a tabela");
 
         $footer = new footer;
         $footer->show();
@@ -90,30 +91,32 @@ class tabelaController extends controllerAbstract{
         $head->show("Selecione a tabela","");
 
         $menu = new menu();
-        $menus = array($menu->getMenu($this->url."tabela/exportar/tb_cliente","Cliente"),
-                       $menu->getMenu($this->url."tabela/exportar/tb_conexao","Conexão"),
-                       $menu->getMenu($this->url."tabela/exportar/tb_usuario","Usuario"),
-                       $menu->getMenu($this->url."tabela/exportar/tb_ramal","Ramal"),
-                       $menu->getMenu($this->url."tabela","Voltar"));
+        $menu->addMenu($this->url."tabela/exportar/tb_cliente","Cliente")
+            ->addMenu($this->url."tabela/exportar/tb_conexao","Conexão")
+            ->addMenu($this->url."tabela/exportar/tb_usuario","Usuario")
+            ->addMenu($this->url."tabela/exportar/tb_ramal","Ramal")
+            ->addMenu($this->url."tabela","Voltar");
         
-        $menu->show("Selecione a tabela",$menus);
+        $menu->show("Selecione a tabela");
 
         $footer = new footer;
         $footer->show();
     }
 
-    public function exportar($tabela=array()){
+    public function exportar($tabela=[]){
 
         if (array_key_exists(0,$tabela)){
             $this->tabela = $tabela[0];
 
             $head = new head();
-            $head->show("Exportação","");
+            $head->show("Exportação","","Selecione as Colunas Desejadas");
 
-            $form = new form("Selecione as Colunas Desejadas",$this->url."tabela/action/exportar/".$tabela[0]);
+            $form = new form($this->url."tabela/action/exportar/".$tabela[0]);
             
             $db = new db($this->tabela);
             $colunas = $db->getColumns();
+
+            $elements = new elements();
 
             $customs = [];
 
@@ -122,57 +125,57 @@ class tabelaController extends controllerAbstract{
                 $checked = true;
                 $readonly = true;
                 foreach ($colunas as $coluna){
-                    $customs[] = $form->getCustomInput(2,$form->checkbox($coluna,$this->getNomeAmigavel($coluna),false,$checked,$readonly));
+                    $form->addCustomInput(2,$elements->checkbox($coluna,$this->getNomeAmigavel($coluna),false,$checked,$readonly));
                     if ($i == 0){
-                        $i++;
                         $checked = false;
                         $readonly = false;
                     }
-                    
+                    if ($i == 6){
+                        $form->setCustomInputs();
+                        $i = 0;
+                    }
+                    $i++;
                 }
-                
-                $customs = array_chunk($customs,6);
-                
-                $form->setCustomInputs($customs);
             }
+            $form->setCustomInputs();
 
-            $form->setButton($form->button("Executar","btn_carregar","submit"));
-            $form->setButtonNoForm($form->button("Voltar","btn_voltar","submit","btn btn-dark pt-2 btn-block","location.href='".$this->url."tabela/tabela_exportar'"));
+            $form->setButton($elements->button("Executar","btn_carregar","submit"));
+            $form->setButtonNoForm($elements->button("Voltar","btn_voltar","submit","btn btn-dark pt-2 btn-block","location.href='".$this->url."tabela/tabela_exportar'"));
             $form->show();
 
             $footer = new footer;
             $footer->show();
 
         }else{
-            mensagem::setErro(array("Tabela não informada"));
+            mensagem::setErro("Tabela não informada");
             header("location: ".$this->url."tabela/tabela_exportar");
         }
     }
 
-    public function importar($tabela=array()){
+    public function importar($tabela=[]){
 
         if (array_key_exists(0,$tabela)){
             $this->tabela = $tabela[0];
             $head = new head();
-            $head->show("Importação","");
+            $head->show("Importação","","Adicione o Arquivo para Importação");
 
-            $form = new form("Adicione o Arquivo para Importação",$this->url."tabela/action/importar/".$tabela[0]);
+            $form = new form($this->url."tabela/action/importar/".$tabela[0]);
 
-                $form->setInputs($form->input("arquivo","Arquivo para Importação:","",false,false,"","file"));
+                $form->setInputs($elements->input("arquivo","Arquivo para Importação:","",false,false,"","file"));
 
-                $form->setButton($form->button("Executar","btn_carregar","submit"));
-                $form->setButtonNoForm($form->button("Voltar","btn_voltar","buttom","btn btn-dark pt-2 btn-block","location.href='".$this->url."tabela/tabela_importar'"));
+                $form->setButton($elements->button("Executar","btn_carregar","submit"));
+                $form->setButtonNoForm($elements->button("Voltar","btn_voltar","buttom","btn btn-dark pt-2 btn-block","location.href='".$this->url."tabela/tabela_importar'"));
                 $form->show();
                 $footer = new footer;
                 $footer->show();
         }
         else{
-            mensagem::setErro(array("Tabela não informada"));
+            mensagem::setErro("Tabela não informada");
             header("location: ".$this->url."tabela/tabela_importar");
         }
     }
     
-    public function action($tabela=array()){
+    public function action($tabela=[]){
         try{
             if (array_key_exists(0,$tabela)){
                 if ($tabela[0] == "exportar"){
@@ -212,19 +215,19 @@ class tabelaController extends controllerAbstract{
                             $arquivoLocal = 'Arquivos/'.$nome; 
                             
                             if (!file_exists($arquivoLocal)) {
-                                Mensagem::setErro(array("Não foi possivel gerar o relatorio"));
+                                Mensagem::setErro("Não foi possivel gerar o relatorio");
                                 return $this->url."exportar";
                             }
-                            Mensagem::setSucesso(array("Exportado com sucesso"));
+                            Mensagem::setSucesso("Exportado com sucesso");
                             header("location: ".$this->url."arquivos/Relatorio.csv");
                         }
                         else {
-                            mensagem::setErro(array("Nenhum registro encontrado"));
+                            mensagem::setErro("Nenhum registro encontrado");
                             header("location: ".$this->url."tabela/exportar/".$tabela[1]);
                         }
                     }
                     else{
-                        mensagem::setErro(array("Tabela não informada"));
+                        mensagem::setErro("Tabela não informada");
                         header("location: ".$this->url."tabela/tabela_importar");
                     }
 
@@ -255,7 +258,7 @@ class tabelaController extends controllerAbstract{
                                         $c++;
                                     }
                                     else {
-                                        Mensagem::setErro(array("Coluna ({$this->getNomeAmigavel($colunas[$c])}) não encontrada na Tabela {$tabela[1]} na linha ".$r));
+                                        Mensagem::setErro("Coluna ({$this->getNomeAmigavel($colunas[$c])}) não encontrada na Tabela {$tabela[1]} na linha ".$r);
                                         header("location: ".$this->url."tabela/tabela_importar");
                                         return;
                                     }
@@ -267,20 +270,20 @@ class tabelaController extends controllerAbstract{
                             
                             fclose($arquivo);
 
-                            Mensagem::setSucesso(array("Exportado com sucesso"));
+                            Mensagem::setSucesso("Exportado com sucesso");
                             header("location: ".$this->url."tabela/tabela_importar");
                         }
                     }else{
-                        Mensagem::setErro(array("Não foi possivel fazer a leitura do arquivo, tente novamente."));
+                        Mensagem::setErro("Não foi possivel fazer a leitura do arquivo, tente novamente.");
                         header("location: ".$this->url."tabela/tabela_importar");
                     }
             }else{
-                Mensagem::setErro(array("Modo não informado"));
+                Mensagem::setErro("Modo não informado");
                 header("location: ".$this->url."tabela/tabela_importar");
             }
         }
         catch (Exception $e){
-            Mensagem::setErro(array($e->getMessage()));
+            Mensagem::setErro($e->getMessage());
             return $this->url."tabela";
         }
     }

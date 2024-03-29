@@ -23,7 +23,7 @@ class menu extends pagina{
         
         $this->tpl->show();
     }
-    public function getMenu($url_menu,$titulo_menu){
+    public function addMenu($url_menu,$titulo_menu){
         $this->menus[] = json_decode('{"url_menu":"'.$url_menu.'","titulo_menu":"'.$titulo_menu.'"}');
         return $this;
     }

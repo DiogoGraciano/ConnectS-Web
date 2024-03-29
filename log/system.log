@@ -2,3 +2,6 @@
 2024-03-29T02:22:35+00:00 [ERROR] : Tabela: tb_ramal Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'diogo' for key 'tb_ramal.nm_funcionario'
 2024-03-29T02:24:53+00:00 [ERROR] : Tabela: tb_usuario Erro: Tabela não encontrada
 2024-03-29T02:29:16+00:00 [ERROR] : Tabela: tb_usuario Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'tb_conexao.cd_cliente' in 'on clause'
+2024-03-29T02:54:17+00:00 [ERROR] : Tabela: Selecione%20as%20Colunas%20Desejadas Erro: Tabela não encontrada
+2024-03-29T02:55:29+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'Array' in 'field list'
+2024-03-29T02:55:58+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'Array' in 'field list'
