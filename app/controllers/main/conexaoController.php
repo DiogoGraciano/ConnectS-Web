@@ -113,7 +113,7 @@ class conexaoController extends controllerAbstract{
         $senha = $this->getValue('senha');
         $obs = $this->getValue('obs');
 
-        conexaoModel::set($cd_cliente,$id_conexao,$nm_terminal,$nr_caixa,$nm_programa,$nm_usuario,$senha,$obs,$cd_conexao);
+        conexaoModel::set($cd_cliente,$id_conexao,$nm_terminal,$nm_programa,$nr_caixa,$nm_usuario,$senha,$obs,$cd_conexao);
 
         $this->go("conexao/manutencao/".$cd_conexao);
     }

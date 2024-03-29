@@ -55,10 +55,12 @@ function validaValor(seletor){
 $(document).ready(function(){
   $("#nome").on("blur",function(){validaVazio("#nome")});
   $("#nrloja").on("blur",function(){validaValor("#nrloja")});
-  $("#id_conexao").on("blur",function(){validaValor("#id_conexao")});
-  $("#nm_programa").on("blur",function(){validaValor("#nm_programa")});
+  $("#id_conexao").on("blur",function(){validaVazio("#id_conexao")});
+  $("#nm_programa").on("blur",function(){validaVazio("#nm_programa")});
   $("#cd_cliente").on("blur",function(){validaValor("#cd_cliente")});
-  $("#nm_terminal").on("blur",function(){validaValor("#nm_terminal")});
+  $("#nm_terminal").on("blur",function(){validaVazio("#nm_terminal")});
+  $("#nm_funcionario").on("blur",function(){validaVazio("#nm_funcionario")});
+  $("#nr_ramal").on("blur",function(){validaVazio("#nr_ramal")});
 });
 
 // $(document).ready(function() {
