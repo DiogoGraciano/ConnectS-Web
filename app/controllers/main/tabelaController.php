@@ -8,6 +8,7 @@ use app\classes\menu;
 use app\classes\footer;
 use app\classes\controllerAbstract;
 use app\classes\elements;
+use app\classes\functions;
 use Exception;
 
 class tabelaController extends controllerAbstract{
@@ -74,10 +75,10 @@ class tabelaController extends controllerAbstract{
         $head->show("Selecione a tabela","");
 
         $menu = new menu();
-        $menu->addMenu($this->url."tabela/importar/tb_cliente","Cliente")
-            ->addMenu($this->url."tabela/Importar/tb_conexao","Conexão")
-            ->addMenu($this->url."tabela/importar/tb_usuario","Usuario")
-            ->addMenu($this->url."tabela/importar/tb_ramal","Ramal")
+        $menu->addMenu($this->url."tabela/importar/".functions::encrypt("tb_cliente"),"Cliente")
+            ->addMenu($this->url."tabela/Importar/".functions::encrypt("tb_conexao"),"Conexão")
+            ->addMenu($this->url."tabela/importar/".functions::encrypt("tb_usuario"),"Usuario")
+            ->addMenu($this->url."tabela/importar/".functions::encrypt("tb_ramal"),"Ramal")
             ->addMenu($this->url."tabela","Voltar");
         
         $menu->show("Selecione a tabela");
@@ -91,10 +92,10 @@ class tabelaController extends controllerAbstract{
         $head->show("Selecione a tabela","");
 
         $menu = new menu();
-        $menu->addMenu($this->url."tabela/exportar/tb_cliente","Cliente")
-            ->addMenu($this->url."tabela/exportar/tb_conexao","Conexão")
-            ->addMenu($this->url."tabela/exportar/tb_usuario","Usuario")
-            ->addMenu($this->url."tabela/exportar/tb_ramal","Ramal")
+        $menu->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_cliente"),"Cliente")
+            ->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_conexao"),"Conexão")
+            ->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_usuario"),"Usuario")
+            ->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_ramal"),"Ramal")
             ->addMenu($this->url."tabela","Voltar");
         
         $menu->show("Selecione a tabela");
@@ -106,8 +107,6 @@ class tabelaController extends controllerAbstract{
     public function exportar($tabela=[]){
 
         if (array_key_exists(0,$tabela)){
-            $this->tabela = $tabela[0];
-
             $head = new head();
             $head->show("Exportação","","Selecione as Colunas Desejadas");
 
@@ -155,19 +154,21 @@ class tabelaController extends controllerAbstract{
     public function importar($tabela=[]){
 
         if (array_key_exists(0,$tabela)){
-            $this->tabela = $tabela[0];
             $head = new head();
             $head->show("Importação","","Adicione o Arquivo para Importação");
 
             $form = new form($this->url."tabela/action/importar/".$tabela[0]);
 
-                $form->setInputs($elements->input("arquivo","Arquivo para Importação:","",false,false,"","file"));
+            $elements = new elements();
 
-                $form->setButton($elements->button("Executar","btn_carregar","submit"));
-                $form->setButtonNoForm($elements->button("Voltar","btn_voltar","buttom","btn btn-dark pt-2 btn-block","location.href='".$this->url."tabela/tabela_importar'"));
-                $form->show();
-                $footer = new footer;
-                $footer->show();
+            $form->setInputs($elements->input("arquivo","Arquivo para Importação:","",false,false,"","file"));
+
+            $form->setInputs($elements->label("Tabela deve ser importada em formato csv com (;) e formatação UTF-8"));
+            $form->setButton($elements->button("Executar","btn_carregar","submit"));
+            $form->setButtonNoForm($elements->button("Voltar","btn_voltar","buttom","btn btn-dark pt-2 btn-block","location.href='".$this->url."tabela/tabela_importar'"));
+            $form->show();
+            $footer = new footer;
+            $footer->show();
         }
         else{
             mensagem::setErro("Tabela não informada");
@@ -177,10 +178,10 @@ class tabelaController extends controllerAbstract{
     
     public function action($tabela=[]){
         try{
-            if (array_key_exists(0,$tabela)){
+            if (array_key_exists(0,$tabela) && array_key_exists(1,$tabela)){
                 if ($tabela[0] == "exportar"){
                     if (array_key_exists(1,$tabela)){
-                        $db = new db($tabela[1]);
+                        $db = new db(functions::decrypt($tabela[1]));
                         $colunas = $db->getColumns();
 
                         $colunas_selecionada = [];
@@ -193,7 +194,7 @@ class tabelaController extends controllerAbstract{
                             }
                         }
 
-                        $resultados = $db->selectColumns($colunas_selecionada);
+                        $resultados = $db->selectColumns(...$colunas_selecionada);
 
                         if ($resultados){
 
@@ -240,7 +241,8 @@ class tabelaController extends controllerAbstract{
                         while (($data = fgetcsv($arquivo, 1000, ";")) !== FALSE) {
                             $rows[] = $data;
                         } 
-                            $db = new db($tabela[1]);
+                            $tabelaDb = functions::decrypt($tabela[1]);
+                            $db = new db($tabelaDb);
                             $colunas_db = $db->getColumns();
                             $colunas = [];
                             $tb = $db->getObject();
@@ -258,7 +260,7 @@ class tabelaController extends controllerAbstract{
                                         $c++;
                                     }
                                     else {
-                                        Mensagem::setErro("Coluna ({$this->getNomeAmigavel($colunas[$c])}) não encontrada na Tabela {$tabela[1]} na linha ".$r);
+                                        Mensagem::setErro("Coluna ({$this->getNomeAmigavel($colunas[$c])}) não encontrada na Tabela {$tabelaDb} na linha ".$r);
                                         header("location: ".$this->url."tabela/tabela_importar");
                                         return;
                                     }

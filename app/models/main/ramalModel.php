@@ -17,7 +17,7 @@ class ramalModel{
 
         $ramal = new ramal;
 
-        if ($ramal->get($nm_funcionario,"nm_funcionario")->cd_ramal){
+        if ($ramal->get($nm_funcionario,"nm_funcionario")->cd_ramal && !$cd_ramal){
             mensagem::setErro("Funcionario já existe");
             return false;
         };
