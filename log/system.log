@@ -19,3 +19,13 @@
 2024-04-03T22:37:33+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'Array' in 'field list'
 2024-04-03T22:39:11+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'Array' in 'field list'
 2024-04-03T22:40:00+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ',cd_cliente,nm_cliente,nr_loja FROM tb_cliente' at line 1
+2024-04-06T00:25:14+00:00 [ERROR] : Tabela: tb_cliente Erro: Tabela não encontrada
+2024-04-06T00:27:30+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste1' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:27:30+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:27:30+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste2' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:27:55+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste1' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:27:55+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:27:55+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste2' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:28:32+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste1' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:28:32+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste' for key 'tb_cliente.nm_cliente'
+2024-04-06T00:28:32+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste2' for key 'tb_cliente.nm_cliente'

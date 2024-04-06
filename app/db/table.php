@@ -151,4 +151,29 @@ class usuario extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+class LoginApi extends db{
+    public function __construct(){
+        parent::__construct("tb_login_api");
+    }
+
+    public function get($value="",$column="cd_login_api"){
+        $retorno = [];
+        
+        if ($value)
+            $retorno = $this->addFilter($column,"=",$value)->selectAll();
+    
+        if (is_array($retorno) && count($retorno) == 1)
+            return $retorno[0];
+
+        return $this->getObject(); ;
+    }
+
+    public function getAll(){
+        return $this->selectAll();
+    }
+
+    public function delete($value,$column="cd_login_api"){
+        return $this->addFilter($column,"=",$value)->deleteByFilter();
+    }
+}
 

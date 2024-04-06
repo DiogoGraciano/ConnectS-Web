@@ -4,6 +4,7 @@ namespace app\controllers\main;
 use app\classes\functions;
 use app\classes\controllerAbstract;
 use app\models\main\clienteModel;
+use app\db\LoginApi;
 
 
 header('Content-Type: application/json; charset=utf-8');
@@ -14,27 +15,45 @@ class apiV1Controller extends controllerAbstract{
     private $data;
 
     public function __construct(){
+        if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])){
+            echo json_encode(['error' => "Token não informado ou invalido","result" => false]);
+            http_response_code(400);
+            die;
+        }
+
+        if (!$this->validateUser($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW'])){
+            echo json_encode(['error' => "Token invalido","result" => false]);
+            http_response_code(400);
+            die;
+        }
+
         $this->requestType = $_SERVER['REQUEST_METHOD'];
         if ($this->requestType === "PUT" || $this->requestType === "POST")
             $this->data = json_decode(file_get_contents('php://input'), true);
     }
 
-    public function getClientesList(){
+    private function validateUser($usuario,$senha){
+        return (new LoginApi)->selectByValues(["usuario","senha"],[$usuario,$senha]);
+    }
+
+    public function getClientesList($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET))
                 echo json_encode(["result" => clienteModel::getAll()]);
 
         } catch(Exception $e) {
             echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            http_response_code(400);
         }
     }
-    public function ClientesbyIds($parameters){
+    public function getClientesbyIds($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET)){
                 $clientes = [];
                 $errors = [];
                 foreach ($parameters as $id){
-                    if ($cliente = clienteModel::get($id))
+                    $cliente = clienteModel::get($id);
+                    if ($cliente->cd_cliente)
                         $clientes[] = $cliente;
                     else 
                         $errors[] = "Cliente com Id ({$id}) não encontrado";
@@ -45,75 +64,61 @@ class apiV1Controller extends controllerAbstract{
                 $clientes = [];
                 $errors = [];
                 foreach ($parameters as $id){
-                    if ($cliente = clienteModel::delete($id))
+                    $cliente = clienteModel::get($id);
+                    if ($cliente->cd_cliente && clienteModel::delete($cliente->cd_cliente)){
                         $clientes[] = "Cliente com Id ({$id}) deletado com sucesso";
-                    else 
+                    }else 
                         $errors[] = "Cliente com Id ({$id}) não encontrado";
                 }
                 echo json_encode(["result" => $clientes, "errors" => $errors]);
-            }else 
+            }else{
                 echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                http_response_code(400);
+            }
         } catch(Exception $e) {
             echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            http_response_code(400);
         }
     }
-    public function setClientes(){
+    public function setClientes($parameters){
         try {
             $errors = [];
             $result = []; 
             if ($this->requestType === 'PUT' && $this->data){
                foreach ($this->data as $cliente){
-                    if (clienteModel::set($cliente->nome,$cliente->nr_loja,$cliente->cd_cliente)){
-                        $result[] = "Cliente com Id ({$cliente->cd_cliente}) atualizado com sucesso";
+                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
+                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
+                            $result[] = "Cliente com Id ({$cliente}) atualizado com sucesso";
+                        }
+                        else{
+                            $errors[] = "Cliente não atualizado";
+                        }
                     }
-                    else{
-                        $errors[] = "Cliente com Id ({$cliente->cd_cliente}) não atualizado";
-                    }
+                    else
+                        $errors[] = "Cliente não Informado corretamente";
                }
                echo json_encode(["result" => $result, "errors" => $errors]);
             }
             elseif($this->requestType === 'POST' && $this->data){
                 foreach ($this->data as $cliente){
-                    if (clienteModel::set($cliente->nome,$cliente->nr_loja)){
-                        $result[] = "Cliente com Id ({$cliente->cd_cliente}) atualizado com sucesso";
+                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"])){
+                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"])){
+                            $result[] = "Cliente com Id ({$cliente}) inserido com sucesso";
+                        }
+                        else{
+                            $errors[] = "Cliente não inserido, verifique se o nome do cliente ja está cadastrado";
+                        }
                     }
-                    else{
-                        $errors[] = "Cliente com Id ({$cliente->cd_cliente}) não atualizado";
-                    }
+                    else
+                        $errors[] = "Cliente não Informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
-            }else 
+            }else{
                 echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                http_response_code(400);
+            }
         } catch(Exception $e) {
             echo json_encode(['error' => $e->getMessage(),"result" => false]);
         }
-    }
-
-    private function getAuthorizationHeader(){
-        $headers = null;
-        if (isset($_SERVER['Authorization'])) {
-            $headers = trim($_SERVER["Authorization"]);
-        }
-        else if (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
-            $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
-        } elseif (function_exists('apache_request_headers')) {
-            $requestHeaders = apache_request_headers();
-            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
-            if (isset($requestHeaders['Authorization'])) {
-                $headers = trim($requestHeaders['Authorization']);
-            }
-        }
-        return $headers;
-    }
-
-    private function getBearerToken() {
-        $headers = getAuthorizationHeader();
-        // HEADER: Get the access token from the header
-        if (!empty($headers)) {
-            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-                return $matches[1];
-            }
-        }
-        return null;
     }
 }

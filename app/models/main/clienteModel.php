@@ -30,7 +30,7 @@ class clienteModel{
 
             if ($retorno == true){
                 mensagem::setSucesso("Atualizado com Sucesso");
-                return True;
+                return $cliente->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");
@@ -49,7 +49,7 @@ class clienteModel{
 
             if ($retorno == true){
                 mensagem::setSucesso("Criado com Sucesso");
-                return True;
+                return $cliente->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");
