@@ -4,6 +4,7 @@ namespace app\controllers\main;
 use app\classes\functions;
 use app\classes\controllerAbstract;
 use app\models\main\clienteModel;
+use app\models\main\ramalModel;
 use app\db\LoginApi;
 
 
@@ -71,6 +72,92 @@ class apiV1Controller extends controllerAbstract{
                         $errors[] = "Cliente com Id ({$id}) não encontrado";
                 }
                 echo json_encode(["result" => $clientes, "errors" => $errors]);
+            }else{
+                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                http_response_code(400);
+            }
+        } catch(Exception $e) {
+            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            http_response_code(400);
+        }
+    }
+    public function setClientes($parameters){
+        try {
+            $errors = [];
+            $result = []; 
+            if ($this->requestType === 'PUT' && $this->data){
+               foreach ($this->data as $cliente){
+                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
+                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
+                            $result[] = "Cliente com Id ({$cliente}) atualizado com sucesso";
+                        }
+                        else{
+                            $errors[] = "Cliente não atualizado";
+                        }
+                    }
+                    else
+                        $errors[] = "Cliente não Informado corretamente";
+               }
+               echo json_encode(["result" => $result, "errors" => $errors]);
+            }
+            elseif($this->requestType === 'POST' && $this->data){
+                foreach ($this->data as $cliente){
+                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"])){
+                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"])){
+                            $result[] = "Cliente com Id ({$cliente}) inserido com sucesso";
+                        }
+                        else{
+                            $errors[] = "Cliente não inserido, verifique se o nome do cliente ja está cadastrado";
+                        }
+                    }
+                    else
+                        $errors[] = "Cliente não Informado corretamente";
+                }
+                echo json_encode(["result" => $result, "errors" => $errors]);
+            }else{
+                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                http_response_code(400);
+            }
+        } catch(Exception $e) {
+            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+        }
+    }
+
+    public function getRamalList($parameters){
+        try {
+            if ($this->requestType === 'GET' && empty($_GET))
+                echo json_encode(["result" => ramalModel::getAll()]);
+
+        } catch(Exception $e) {
+            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            http_response_code(400);
+        }
+    }
+    public function getRamalsbyIds($parameters){
+        try {
+            if ($this->requestType === 'GET' && empty($_GET)){
+                $ramals = [];
+                $errors = [];
+                foreach ($parameters as $id){
+                    $ramal = ramalModel::get($id);
+                    if ($ramal->cd_ramal)
+                        $ramals[] = $ramal;
+                    else 
+                        $errors[] = "Cliente com Id ({$id}) não encontrado";
+                }
+                echo json_encode(["result" => $ramals, "errors" => $errors]);
+            }
+            elseif ($this->requestType === 'DELETE'){
+                $ramals = [];
+                $errors = [];
+                foreach ($parameters as $id){
+                    $ramal = ramalModel::get($id);
+                    if ($cliente->cd_cliente && ramalModel::delete($ramal->cd_ramal)){
+                        $ramals[] = "Cliente com Id ({$id}) deletado com sucesso";
+                    }else 
+                        $errors[] = "Cliente com Id ({$id}) não encontrado";
+                }
+                echo json_encode(["result" => $ramals, "errors" => $errors]);
             }else{
                 echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
                 http_response_code(400);
