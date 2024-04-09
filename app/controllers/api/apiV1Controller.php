@@ -33,6 +33,16 @@ class apiV1Controller extends controllerAbstract{
             $this->data = json_decode(file_get_contents('php://input'), true);
     }
 
+    private function setParameters($columns,$return_api){
+        $return = [];
+        foreach ($columns as $column){
+            if (isset($return_api[$column]))
+                $return[] = $return_api[$column];
+        }
+
+        return $return;
+    }
+
     private function validateUser($usuario,$senha){
         return (new LoginApi)->selectByValues(["usuario","senha"],[$usuario,$senha]);
     }
@@ -143,7 +153,7 @@ class apiV1Controller extends controllerAbstract{
                     if ($ramal->cd_ramal)
                         $ramals[] = $ramal;
                     else 
-                        $errors[] = "Cliente com Id ({$id}) não encontrado";
+                        $errors[] = "Ramal com Id ({$id}) não encontrado";
                 }
                 echo json_encode(["result" => $ramals, "errors" => $errors]);
             }
@@ -152,10 +162,10 @@ class apiV1Controller extends controllerAbstract{
                 $errors = [];
                 foreach ($parameters as $id){
                     $ramal = ramalModel::get($id);
-                    if ($cliente->cd_cliente && ramalModel::delete($ramal->cd_ramal)){
-                        $ramals[] = "Cliente com Id ({$id}) deletado com sucesso";
+                    if ($ramal->cd_ramal && ramalModel::delete($ramal->cd_ramal)){
+                        $ramals[] = "Ramal com Id ({$id}) deletado com sucesso";
                     }else 
-                        $errors[] = "Cliente com Id ({$id}) não encontrado";
+                        $errors[] = "Ramal com Id ({$id}) não encontrado";
                 }
                 echo json_encode(["result" => $ramals, "errors" => $errors]);
             }else{
@@ -167,37 +177,40 @@ class apiV1Controller extends controllerAbstract{
             http_response_code(400);
         }
     }
-    public function setClientes($parameters){
+    public function setRamals($parameters){
         try {
             $errors = [];
             $result = []; 
+            $columns = ["nr_ramal","nm_funcionario","nr_telefone","nr_ip","nm_usuario","senha","obs","cd_ramal"];
             if ($this->requestType === 'PUT' && $this->data){
-               foreach ($this->data as $cliente){
-                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
-                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
-                            $result[] = "Cliente com Id ({$cliente}) atualizado com sucesso";
+               foreach ($this->data as $registro){
+                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"],$registro["cd_ramal"])){
+                        $registro = $this->setParameters($columns,$registro);
+                        if ($id = RamalModel::set(...$registro)){
+                            $result[] = "Ramal com Id ({$id}) atualizado com sucesso";
                         }
                         else{
-                            $errors[] = "Cliente não atualizado";
+                            $errors[] = mensagem::getErro();
                         }
                     }
                     else
-                        $errors[] = "Cliente não Informado corretamente";
+                        $errors[] = "Ramal não Informado corretamente";
                }
                echo json_encode(["result" => $result, "errors" => $errors]);
             }
             elseif($this->requestType === 'POST' && $this->data){
                 foreach ($this->data as $cliente){
-                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"])){
-                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"])){
-                            $result[] = "Cliente com Id ({$cliente}) inserido com sucesso";
+                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"])){
+                        $registro = $this->setParameters($columns,$registro);
+                        if ($id = RamalModel::set(...$registro)){
+                            $result[] = "Ramal com Id ({$id}) inserido com sucesso";
                         }
                         else{
-                            $errors[] = "Cliente não inserido, verifique se o nome do cliente ja está cadastrado";
+                            $errors[] = mensagem::getErro();
                         }
                     }
                     else
-                        $errors[] = "Cliente não Informado corretamente";
+                        $errors[] = "Ramal não Informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }else{

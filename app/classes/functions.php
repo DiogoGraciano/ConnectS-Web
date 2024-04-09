@@ -164,6 +164,46 @@ class functions{
     public static function genereteCode($number){
         return strtoupper(substr(bin2hex(random_bytes($number)), 1));
     }
+
+    public static function formatarIP($ip) {
+
+        // Remover quaisquer espaços em branco extras
+        $ip = trim($ip);
+            
+        // Validar se o IP possui apenas números
+        if (!ctype_digit($ip)) {
+            // Se não for composto apenas de números, retorne false
+            return false;
+        }
+
+        // Validar se o IP possui 12 dígitos
+        if (strlen($ip) != 12) {
+            // Se não tiver 12 dígitos, retorne false
+            return false;
+        }
+
+        // Formatar o IP no formato desejado (XXX.XXX.XXX.XXX)
+        return sprintf("%03d.%03d.%03d.%03d", substr($ip, 0, 3), substr($ip, 3, 3), substr($ip, 6, 3), substr($ip, 9, 3));
+
+    }
+
+    public static function formatarTelefone($telefone) {
+        // Remover quaisquer caracteres que não sejam dígitos
+        $telefone = preg_replace('/\D/', '', $telefone);
+        
+        // Verificar se o número de telefone tem o comprimento correto
+        if (strlen($telefone) != 10 && strlen($telefone) != 11) {
+            return false; // Retornar falso se o comprimento for inválido
+        }
+        
+        // Se o número tiver 11 dígitos, remover o primeiro dígito (código de área)
+        if (strlen($telefone) == 11) {
+            $telefone = substr($telefone, 1);
+        }
+        
+        // Formatar o número de telefone no estilo desejado (XX) XXXX-XXXX
+        return '(' . substr($telefone, 0, 2) . ') ' . substr($telefone, 2, 4) . '-' . substr($telefone, 6);
+    }
 }
 
 ?>

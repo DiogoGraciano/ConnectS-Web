@@ -22,18 +22,29 @@ class ramalModel{
             return false;
         };
 
-        if($cd_ramal && $nr_ramal){
+        if($cd_ramal && $nr_ramal && $nm_funcionario){
    
             $values = $ramal->getObject();
     
             $values->cd_ramal = $cd_ramal;
             $values->nr_ramal = $nr_ramal;
             $values->nm_funcionario = $nm_funcionario;
-            $values->nr_telefone= $nr_telefone;
-            $values->nr_ip = $nr_ip;
+            if ($nr_telefone = formatarTelefone())
+                $values->nr_telefone = $nr_telefone;
+            else {
+                mensagem::setErro("Numero invalido");
+                return false; 
+            }
+            if ($nr_ip = formatarIP($nr_ip))
+                $values->nr_ip = $nr_ip;
+            else {
+                mensagem::setErro("IP invalido");
+                return false; 
+            }
+
             $values->nm_usuario = $nm_usuario;
             $values->senha = $senha;
-            $values->obs= $obs;
+            $values->obs = trim($obs);
     
             if ($values)
                 $retorno = $ramal->store($values);
@@ -48,7 +59,7 @@ class ramalModel{
             }
     
         }
-        elseif(!$cd_ramal && $nr_ramal){
+        elseif(!$cd_ramal && $nr_ramal && $nm_funcionario){
             $values = $ramal->getObject();
 
             $values->cd_ramal = $cd_ramal;
@@ -79,7 +90,7 @@ class ramalModel{
     }
 
     public static function delete($cd){
-        (new ramal)->delete($cd);
+        return (new ramal)->delete($cd);
     }
 
 }
