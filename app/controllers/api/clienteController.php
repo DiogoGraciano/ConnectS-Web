@@ -1,5 +1,5 @@
 <?php 
-namespace app\controllers\main;
+namespace app\controllers\api;
 use app\classes\controllerAbstract;
 use app\models\main\clienteModel;
 

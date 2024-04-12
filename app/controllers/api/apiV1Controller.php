@@ -1,13 +1,10 @@
 <?php 
-namespace app\controllers\main;
+namespace app\controllers\api;
 
 use app\classes\functions;
 use app\classes\controllerAbstract;
 use app\classes\mensagem;
 use app\models\main\clienteModel;
-use app\models\main\ramalModel;
-use app\db\LoginApi;
-
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -35,7 +32,7 @@ class apiV1Controller extends controllerAbstract{
     }
 
     public function cliente($parameters){
-        if (array_key_exists(0,$parameters) && method_exists($class = new clienteController,$method = $parameters[0])){
+        if (array_key_exists(0,$parameters) && method_exists($class = new clienteController($this->requestType,$this->data),$method = $parameters[0])){
             unset($parameters[0]);
             $class->$method($parameters);
         }
@@ -46,7 +43,7 @@ class apiV1Controller extends controllerAbstract{
     }
 
     public function ramal($parameters){
-        if (array_key_exists(0,$parameters) && method_exists($class = new ramalController,$method = $parameters[0])){
+        if (array_key_exists(0,$parameters) && method_exists($class = new ramalController($this->requestType,$this->data),$method = $parameters[0])){
             unset($parameters[0]);
             $class->$method($parameters);
         }

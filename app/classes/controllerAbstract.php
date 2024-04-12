@@ -1,5 +1,6 @@
 <?php
 namespace app\classes;
+use app\db\LoginApi;
 
 abstract class controllerAbstract{
 
@@ -12,11 +13,11 @@ abstract class controllerAbstract{
 	    $this->url = $protocol.$domainName."/";
     }
 
-    public function setList($nome,$valor){
+    public function setSessionVar($nome,$valor){
         $_SESSION[$nome] = $valor;
     }
 
-    public function getList($nome){
+    public function getSessionVar($nome){
         if (array_key_exists($nome,$_SESSION))
             return $_SESSION[$nome];
         else 
@@ -34,7 +35,7 @@ abstract class controllerAbstract{
             return "";
     }
 
-    private function setParameters($columns,$return_api){
+    public function setParameters($columns,$return_api){
         $return = [];
         foreach ($columns as $column){
             if (isset($return_api[$column]))
@@ -44,7 +45,7 @@ abstract class controllerAbstract{
         return $return;
     }
 
-    private function validateUserApi($usuario,$senha){
+    public function validateUserApi($usuario,$senha){
         return (new LoginApi)->selectByValues(["usuario","senha"],[$usuario,$senha]);
     }
 
