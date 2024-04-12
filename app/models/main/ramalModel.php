@@ -2,6 +2,7 @@
 namespace app\models\main;
 use app\db\ramal;
 use app\classes\mensagem;
+use app\classes\functions;
 
 class ramalModel{
 
@@ -22,6 +23,21 @@ class ramalModel{
             return false;
         };
 
+        if (!$nr_telefone = functions::formatarTelefone($nr_telefone)){
+            mensagem::setErro("Numero invalido");
+            return false; 
+        }
+
+        if (!$nr_ip = functions::formatarIP($nr_ip)){
+            mensagem::setErro("Numero de IP invalido");
+            return false; 
+        }
+
+        if ($nr_telefone && $ramal->get($nr_telefone,"nr_telefone")->nr_telefone && !$cd_ramal){
+            mensagem::setErro("Telefone já cadastrado");
+            return false;
+        };
+
         if($cd_ramal && $nr_ramal && $nm_funcionario){
    
             $values = $ramal->getObject();
@@ -29,19 +45,8 @@ class ramalModel{
             $values->cd_ramal = $cd_ramal;
             $values->nr_ramal = $nr_ramal;
             $values->nm_funcionario = $nm_funcionario;
-            if ($nr_telefone = formatarTelefone())
-                $values->nr_telefone = $nr_telefone;
-            else {
-                mensagem::setErro("Numero invalido");
-                return false; 
-            }
-            if ($nr_ip = formatarIP($nr_ip))
-                $values->nr_ip = $nr_ip;
-            else {
-                mensagem::setErro("IP invalido");
-                return false; 
-            }
-
+            $values->nr_telefone = $nr_telefone;
+            $values->nr_ip = $nr_ip;
             $values->nm_usuario = $nm_usuario;
             $values->senha = $senha;
             $values->obs = trim($obs);
@@ -65,11 +70,11 @@ class ramalModel{
             $values->cd_ramal = $cd_ramal;
             $values->nr_ramal = $nr_ramal;
             $values->nm_funcionario = $nm_funcionario;
-            $values->nr_telefone= $nr_telefone;
+            $values->nr_telefone = $nr_telefone;
             $values->nr_ip = $nr_ip;
             $values->nm_usuario = $nm_usuario;
             $values->senha = $senha;
-            $values->obs= $obs;
+            $values->obs = trim($obs);
 
             if ($values)
                 $retorno = $ramal->store($values);

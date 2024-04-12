@@ -34,6 +34,20 @@ abstract class controllerAbstract{
             return "";
     }
 
+    private function setParameters($columns,$return_api){
+        $return = [];
+        foreach ($columns as $column){
+            if (isset($return_api[$column]))
+                $return[] = $return_api[$column];
+        }
+
+        return $return;
+    }
+
+    private function validateUserApi($usuario,$senha){
+        return (new LoginApi)->selectByValues(["usuario","senha"],[$usuario,$senha]);
+    }
+
     public function go($caminho){
         echo '<meta http-equiv="refresh" content="0;url='.$this->url.$caminho.'">';
         exit;

@@ -167,17 +167,12 @@ class functions{
 
     public static function formatarIP($ip) {
 
-        // Remover quaisquer espaços em branco extras
-        $ip = trim($ip);
-            
-        // Validar se o IP possui apenas números
-        if (!ctype_digit($ip)) {
-            // Se não for composto apenas de números, retorne false
-            return false;
-        }
+        $ip = preg_replace('/\D/', '', $ip);
+
+        $tamanho = strlen($ip);
 
         // Validar se o IP possui 12 dígitos
-        if (strlen($ip) != 12) {
+        if ($tamanho < 4 || $tamanho > 12) {
             // Se não tiver 12 dígitos, retorne false
             return false;
         }

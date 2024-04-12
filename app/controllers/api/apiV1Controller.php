@@ -3,6 +3,7 @@ namespace app\controllers\main;
 
 use app\classes\functions;
 use app\classes\controllerAbstract;
+use app\classes\mensagem;
 use app\models\main\clienteModel;
 use app\models\main\ramalModel;
 use app\db\LoginApi;
@@ -22,7 +23,7 @@ class apiV1Controller extends controllerAbstract{
             die;
         }
 
-        if (!$this->validateUser($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW'])){
+        if (!$this->validateUserApi($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW'])){
             echo json_encode(['error' => "Token invalido","result" => false]);
             http_response_code(400);
             die;
@@ -33,192 +34,25 @@ class apiV1Controller extends controllerAbstract{
             $this->data = json_decode(file_get_contents('php://input'), true);
     }
 
-    private function setParameters($columns,$return_api){
-        $return = [];
-        foreach ($columns as $column){
-            if (isset($return_api[$column]))
-                $return[] = $return_api[$column];
+    public function cliente($parameters){
+        if (array_key_exists(0,$parameters) && method_exists($class = new clienteController,$method = $parameters[0])){
+            unset($parameters[0]);
+            $class->$method($parameters);
         }
-
-        return $return;
-    }
-
-    private function validateUser($usuario,$senha){
-        return (new LoginApi)->selectByValues(["usuario","senha"],[$usuario,$senha]);
-    }
-
-    public function getClientesList($parameters){
-        try {
-            if ($this->requestType === 'GET' && empty($_GET))
-                echo json_encode(["result" => clienteModel::getAll()]);
-
-        } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+        else{
+            echo json_encode(['error' => "Metodo não encontrado","result" => false]); 
             http_response_code(400);
         }
     }
-    public function getClientesbyIds($parameters){
-        try {
-            if ($this->requestType === 'GET' && empty($_GET)){
-                $clientes = [];
-                $errors = [];
-                foreach ($parameters as $id){
-                    $cliente = clienteModel::get($id);
-                    if ($cliente->cd_cliente)
-                        $clientes[] = $cliente;
-                    else 
-                        $errors[] = "Cliente com Id ({$id}) não encontrado";
-                }
-                echo json_encode(["result" => $clientes, "errors" => $errors]);
-            }
-            elseif ($this->requestType === 'DELETE'){
-                $clientes = [];
-                $errors = [];
-                foreach ($parameters as $id){
-                    $cliente = clienteModel::get($id);
-                    if ($cliente->cd_cliente && clienteModel::delete($cliente->cd_cliente)){
-                        $clientes[] = "Cliente com Id ({$id}) deletado com sucesso";
-                    }else 
-                        $errors[] = "Cliente com Id ({$id}) não encontrado";
-                }
-                echo json_encode(["result" => $clientes, "errors" => $errors]);
-            }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
-                http_response_code(400);
-            }
-        } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
-            http_response_code(400);
-        }
-    }
-    public function setClientes($parameters){
-        try {
-            $errors = [];
-            $result = []; 
-            if ($this->requestType === 'PUT' && $this->data){
-               foreach ($this->data as $cliente){
-                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
-                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
-                            $result[] = "Cliente com Id ({$cliente}) atualizado com sucesso";
-                        }
-                        else{
-                            $errors[] = "Cliente não atualizado";
-                        }
-                    }
-                    else
-                        $errors[] = "Cliente não Informado corretamente";
-               }
-               echo json_encode(["result" => $result, "errors" => $errors]);
-            }
-            elseif($this->requestType === 'POST' && $this->data){
-                foreach ($this->data as $cliente){
-                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"])){
-                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"])){
-                            $result[] = "Cliente com Id ({$cliente}) inserido com sucesso";
-                        }
-                        else{
-                            $errors[] = "Cliente não inserido, verifique se o nome do cliente ja está cadastrado";
-                        }
-                    }
-                    else
-                        $errors[] = "Cliente não Informado corretamente";
-                }
-                echo json_encode(["result" => $result, "errors" => $errors]);
-            }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
-                http_response_code(400);
-            }
-        } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
-        }
-    }
 
-    public function getRamalList($parameters){
-        try {
-            if ($this->requestType === 'GET' && empty($_GET))
-                echo json_encode(["result" => ramalModel::getAll()]);
-
-        } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
-            http_response_code(400);
+    public function ramal($parameters){
+        if (array_key_exists(0,$parameters) && method_exists($class = new ramalController,$method = $parameters[0])){
+            unset($parameters[0]);
+            $class->$method($parameters);
         }
-    }
-    public function getRamalsbyIds($parameters){
-        try {
-            if ($this->requestType === 'GET' && empty($_GET)){
-                $ramals = [];
-                $errors = [];
-                foreach ($parameters as $id){
-                    $ramal = ramalModel::get($id);
-                    if ($ramal->cd_ramal)
-                        $ramals[] = $ramal;
-                    else 
-                        $errors[] = "Ramal com Id ({$id}) não encontrado";
-                }
-                echo json_encode(["result" => $ramals, "errors" => $errors]);
-            }
-            elseif ($this->requestType === 'DELETE'){
-                $ramals = [];
-                $errors = [];
-                foreach ($parameters as $id){
-                    $ramal = ramalModel::get($id);
-                    if ($ramal->cd_ramal && ramalModel::delete($ramal->cd_ramal)){
-                        $ramals[] = "Ramal com Id ({$id}) deletado com sucesso";
-                    }else 
-                        $errors[] = "Ramal com Id ({$id}) não encontrado";
-                }
-                echo json_encode(["result" => $ramals, "errors" => $errors]);
-            }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
-                http_response_code(400);
-            }
-        } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+        else{
+            echo json_encode(['error' => "Metodo não encontrado","result" => false]); 
             http_response_code(400);
-        }
-    }
-    public function setRamals($parameters){
-        try {
-            $errors = [];
-            $result = []; 
-            $columns = ["nr_ramal","nm_funcionario","nr_telefone","nr_ip","nm_usuario","senha","obs","cd_ramal"];
-            if ($this->requestType === 'PUT' && $this->data){
-               foreach ($this->data as $registro){
-                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"],$registro["cd_ramal"])){
-                        $registro = $this->setParameters($columns,$registro);
-                        if ($id = RamalModel::set(...$registro)){
-                            $result[] = "Ramal com Id ({$id}) atualizado com sucesso";
-                        }
-                        else{
-                            $errors[] = mensagem::getErro();
-                        }
-                    }
-                    else
-                        $errors[] = "Ramal não Informado corretamente";
-               }
-               echo json_encode(["result" => $result, "errors" => $errors]);
-            }
-            elseif($this->requestType === 'POST' && $this->data){
-                foreach ($this->data as $cliente){
-                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"])){
-                        $registro = $this->setParameters($columns,$registro);
-                        if ($id = RamalModel::set(...$registro)){
-                            $result[] = "Ramal com Id ({$id}) inserido com sucesso";
-                        }
-                        else{
-                            $errors[] = mensagem::getErro();
-                        }
-                    }
-                    else
-                        $errors[] = "Ramal não Informado corretamente";
-                }
-                echo json_encode(["result" => $result, "errors" => $errors]);
-            }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
-                http_response_code(400);
-            }
-        } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
         }
     }
 }
