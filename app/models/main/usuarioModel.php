@@ -10,7 +10,7 @@ class usuarioModel{
     }
 
     public static function getAll(){
-        return (new usuario)->addJoin("INNER","tb_cliente","tb_cliente.cd_cliente","tb_usuario.cd_cliente")
+        return (new usuario)->addJoin("LEFT","tb_cliente","tb_cliente.cd_cliente","tb_usuario.cd_cliente")
                         ->selectColumns("cd_usuario","nm_cliente","nr_loja","nm_terminal","nm_sistema","nm_usuario","senha","obs");
     }
 
@@ -35,7 +35,7 @@ class usuarioModel{
 
             if ($retorno == true){
                 mensagem::setSucesso("Criado com Sucesso");
-                return True;
+                $usuario->getLastId();
             }
             else {
                 $Mensagems = ($usuario->getError());
@@ -60,7 +60,7 @@ class usuarioModel{
 
             if ($retorno == true){
                 mensagem::setSucesso("Atualizado com Sucesso");
-                return True;
+                $usuario->getLastId();
             }
             else {
                 mensagem::setErro($Mensagems);

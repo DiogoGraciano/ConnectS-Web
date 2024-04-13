@@ -35,3 +35,14 @@
 2024-04-10T22:15:23+00:00 [ERROR] : Tabela: tb_ramal Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '(89) 9654-4444' for key 'tb_ramal.nr_telefone'
 2024-04-10T22:15:39+00:00 [ERROR] : Tabela: tb_ramal Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '(89) 9654-4444' for key 'tb_ramal.nr_telefone'
 2024-04-12T22:08:34+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste3' for key 'tb_cliente.nm_cliente'
+2024-04-12T22:59:41+00:00 [ERROR] : Tabela: tb_cliente Erro: Tabela não encontrada
+2024-04-12T23:03:57+00:00 [ERROR] : Tabela: tb_cliente Erro: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'teste' for key 'tb_cliente.nm_cliente'
+2024-04-12T23:11:13+00:00 [ERROR] : Tabela: tb_usuario Erro: Tabela não encontrada
+2024-04-12T23:22:24+00:00 [ERROR] : Tabela: tb_conexao Erro: Tabela não encontrada
+2024-04-13T00:06:26+00:00 [ERROR] : Tabela: tb_ramal Erro: Tabela não encontrada
+2024-04-13T00:27:51+00:00 [ERROR] : Tabela: tb_agendamento Erro: Tabela não encontrada
+2024-04-13T00:27:51+00:00 [ERROR] : Tabela: tb_agendamento Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'status' cannot be null
+2024-04-13T00:27:51+00:00 [ERROR] : Tabela: tb_agendamento Erro: Tabela não encontrada
+2024-04-13T00:27:51+00:00 [ERROR] : Tabela: tb_agendamento Erro: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'status' cannot be null
+2024-04-13T00:30:59+00:00 [ERROR] : Tabela: tb_agendamento Erro: Tabela não encontrada
+2024-04-13T00:32:17+00:00 [ERROR] : Tabela: tb_agendamento Erro: Tabela não encontrada

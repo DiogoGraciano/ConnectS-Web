@@ -1,10 +1,10 @@
 <?php 
 namespace app\controllers\api;
 use app\classes\controllerAbstract;
-use app\models\main\ramalModel;
+use app\models\main\agendaModel;
 use app\classes\mensagem;
 
-class ramalController extends controllerAbstract{
+class agendaController extends controllerAbstract{
 
     private $requestType;
     private $data;
@@ -16,7 +16,7 @@ class ramalController extends controllerAbstract{
     public function getList($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET))
-                echo json_encode(["result" => ramalModel::getAll()]);
+                echo json_encode(["result" => agendaModel::getAll()]);
 
         } catch(Exception $e) {
             echo json_encode(['error' => $e->getMessage(),"result" => false]);
@@ -26,28 +26,28 @@ class ramalController extends controllerAbstract{
     public function getByIds($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET)){
-                $ramals = [];
+                $agendas = [];
                 $errors = [];
                 foreach ($parameters as $id){
-                    $ramal = ramalModel::get($id);
-                    if ($ramal->cd_ramal)
-                        $ramals[] = $ramal;
+                    $agenda = agendaModel::get($id);
+                    if ($agenda->cd_agenda)
+                        $agendas[] = $agenda;
                     else 
-                        $errors[] = "Ramal com Id ({$id}) não encontrado";
+                        $errors[] = "agenda com Id ({$id}) não encontrado";
                 }
-                echo json_encode(["result" => $ramals, "errors" => $errors]);
+                echo json_encode(["result" => $agendas, "errors" => $errors]);
             }
             elseif ($this->requestType === 'DELETE'){
-                $ramals = [];
+                $agendas = [];
                 $errors = [];
                 foreach ($parameters as $id){
-                    $ramal = ramalModel::get($id);
-                    if ($ramal->cd_ramal && ramalModel::delete($ramal->cd_ramal)){
-                        $ramals[] = "Ramal com Id ({$id}) deletado com sucesso";
+                    $agenda = agendaModel::get($id);
+                    if ($agenda->cd_agenda && agendaModel::delete($agenda->cd_agenda)){
+                        $agendas[] = "agenda com Id ({$id}) deletado com sucesso";
                     }else 
-                        $errors[] = "Ramal com Id ({$id}) não encontrado";
+                        $errors[] = "agenda com Id ({$id}) não encontrado";
                 }
-                echo json_encode(["result" => $ramals, "errors" => $errors]);
+                echo json_encode(["result" => $agendas, "errors" => $errors]);
             }else{
                 echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
                 http_response_code(400);
@@ -62,36 +62,36 @@ class ramalController extends controllerAbstract{
             $errors = [];
             $result = []; 
             if ($this->requestType === 'PUT' && $this->data){
-                $columns = ["nr_ramal","nm_funcionario","nr_telefone","nr_ip","nm_usuario","senha","obs","cd_ramal"];
+                $columns = ["cd_cliente","cd_funcionario","titulo","dt_inicio","dt_fim","cor","obs","status","cd_agenda"];
                 foreach ($this->data as $registro){
-                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"],$registro["cd_ramal"])){
+                    if (isset($registro["cd_cliente"],$registro["cd_funcionario"],$registro["titulo"],$registro["dt_inicio"],$registro["dt_fim"],$registro["cd_agenda"])){
                         $registro = $this->setParameters($columns,$registro);
-                        if ($id = RamalModel::set(...$registro)){
-                            $result[] = "Ramal com Id ({$id}) atualizado com sucesso";
+                        if ($agenda = agendaModel::set(...$registro)){
+                            $result[] = "agenda com Id ({$agenda}) atualizado com sucesso";
                         }
                         else{
-                            $errors[] = mensagem::getErro();
+                            $errors[] = "agenda não atualizado";
                         }
                     }
                     else
-                        $errors[] = "Ramal não Informado corretamente";
+                        $errors[] = "agenda não Informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }
             elseif($this->requestType === 'POST' && $this->data){
-                $columns = ["nr_ramal","nm_funcionario","nr_telefone","nr_ip","nm_usuario","senha","obs"];
+                $columns = ["cd_cliente","cd_funcionario","titulo","dt_inicio","dt_fim","cor","obs","status"];
                 foreach ($this->data as $registro){
-                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"])){
+                    if (isset($registro["cd_cliente"],$registro["cd_funcionario"],$registro["titulo"],$registro["dt_inicio"],$registro["dt_fim"])){
                         $registro = $this->setParameters($columns,$registro);
-                        if ($id = RamalModel::set(...$registro)){
-                            $result[] = "Ramal com Id ({$id}) inserido com sucesso";
+                        if ($agenda = agendaModel::set(...$registro)){
+                            $result[] = "agenda com Id ({$agenda}) inserido com sucesso";
                         }
                         else{
-                            $errors[] = mensagem::getErro();
+                            $errors[] = "agenda não inserido, verifique se o nome do agenda ja está cadastrado";
                         }
                     }
                     else
-                        $errors[] = "Ramal não Informado corretamente";
+                        $errors[] = "agenda não Informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }else{

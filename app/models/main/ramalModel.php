@@ -56,7 +56,7 @@ class ramalModel{
     
             if ($retorno == true){
                 mensagem::setSucesso("Atualizado com Sucesso");
-                return True;
+                return $ramal->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");
@@ -81,7 +81,7 @@ class ramalModel{
 
             if ($retorno == true){
                 mensagem::setSucesso("Adicionado com Sucesso");
-                return True;
+                return $ramal->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");

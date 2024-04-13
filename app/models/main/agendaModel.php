@@ -9,6 +9,10 @@ class agendaModel{
         return (new agenda)->get($cd);
     }
 
+    public static function getAll(){
+        return (new agenda)->getAll();
+    }
+
     public static function getEvents($dt_inicio,$dt_fim){
         $agenda = new agenda;
         $results = $agenda->addFilter("dt_inicio",">=",$dt_inicio)->addFilter("dt_fim","<=",$dt_fim)->selectAll();
@@ -29,11 +33,11 @@ class agendaModel{
         return json_encode($return);
     }
 
-    public static function set($cd_cliente,$cd_funcionario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$cd_agenda){
+    public static function set($cd_cliente,$cd_funcionario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$status,$cd_agenda=""){
 
         $agenda = new agenda;
 
-        if($cd_agenda && $cd_cliente && $cd_funcionario && $titulo && $dt_inicio && $dt_fim){
+        if($cd_agenda && $cd_cliente && $cd_funcionario && $titulo && $dt_inicio && $dt_fim && $status){
         
             $values = $agenda->getObject();
 
@@ -45,13 +49,14 @@ class agendaModel{
             $values->dt_fim = $dt_fim;
             $values->cor = $cor;
             $values->obs= $obs;
+            $values->status = $status;
 
             if ($values)
                 $retorno = $agenda->store($values);
 
             if ($retorno == true){
                 mensagem::setSucesso("Atualizado com Sucesso");
-                return True;
+                return $agenda->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");
@@ -59,7 +64,7 @@ class agendaModel{
             }
 
         }
-        elseif(!$cd_agenda && $cd_cliente && $cd_funcionario && $titulo && $dt_inicio && $dt_fim){
+        elseif(!$cd_agenda && $cd_cliente && $cd_funcionario && $titulo && $dt_inicio && $dt_fim && $status){
             $values = $agenda->getObject();
 
             $values->cd_cliente = $cd_cliente;
@@ -69,13 +74,14 @@ class agendaModel{
             $values->dt_fim = $dt_fim;
             $values->cor = $cor;
             $values->obs= $obs;
+            $values->status = $status;
 
             if ($values)
                 $retorno = $agenda->store($values);
 
             if ($retorno == true){
                 mensagem::setSucesso("Criado com Sucesso");
-                return True;
+                return $agenda->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");

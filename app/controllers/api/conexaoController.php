@@ -1,10 +1,10 @@
 <?php 
 namespace app\controllers\api;
 use app\classes\controllerAbstract;
-use app\models\main\ramalModel;
+use app\models\main\conexaoModel;
 use app\classes\mensagem;
 
-class ramalController extends controllerAbstract{
+class conexaoController extends controllerAbstract{
 
     private $requestType;
     private $data;
@@ -16,7 +16,7 @@ class ramalController extends controllerAbstract{
     public function getList($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET))
-                echo json_encode(["result" => ramalModel::getAll()]);
+                echo json_encode(["result" => conexaoModel::getAll()]);
 
         } catch(Exception $e) {
             echo json_encode(['error' => $e->getMessage(),"result" => false]);
@@ -26,28 +26,28 @@ class ramalController extends controllerAbstract{
     public function getByIds($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET)){
-                $ramals = [];
+                $conexoes = [];
                 $errors = [];
                 foreach ($parameters as $id){
-                    $ramal = ramalModel::get($id);
-                    if ($ramal->cd_ramal)
-                        $ramals[] = $ramal;
+                    $conexao = conexaoModel::get($id);
+                    if ($conexao->cd_conexao)
+                        $conexoes[] = $conexao;
                     else 
-                        $errors[] = "Ramal com Id ({$id}) não encontrado";
+                        $errors[] = "Conexão com Id ({$id}) não encontrado";
                 }
-                echo json_encode(["result" => $ramals, "errors" => $errors]);
+                echo json_encode(["result" => $conexao, "errors" => $errors]);
             }
             elseif ($this->requestType === 'DELETE'){
-                $ramals = [];
+                $conexoes = [];
                 $errors = [];
                 foreach ($parameters as $id){
-                    $ramal = ramalModel::get($id);
-                    if ($ramal->cd_ramal && ramalModel::delete($ramal->cd_ramal)){
-                        $ramals[] = "Ramal com Id ({$id}) deletado com sucesso";
+                    $conexao = conexaoModel::get($id);
+                    if ($conexao->cd_conexao && conexaoModel::delete($conexao->cd_conexao)){
+                        $conexoes[] = "Conexão com Id ({$id}) deletado com sucesso";
                     }else 
-                        $errors[] = "Ramal com Id ({$id}) não encontrado";
+                        $errors[] = "Conexão com Id ({$id}) não encontrado";
                 }
-                echo json_encode(["result" => $ramals, "errors" => $errors]);
+                echo json_encode(["result" => $conexoes, "errors" => $errors]);
             }else{
                 echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
                 http_response_code(400);
@@ -62,11 +62,11 @@ class ramalController extends controllerAbstract{
             $errors = [];
             $result = []; 
             if ($this->requestType === 'PUT' && $this->data){
-                $columns = ["nr_ramal","nm_funcionario","nr_telefone","nr_ip","nm_usuario","senha","obs","cd_ramal"];
+                $columns = ["cd_cliente","id_conexao","nm_terminal","nm_programa","nr_caixa","nm_usuario","senha","obs","cd_conexao"];
                 foreach ($this->data as $registro){
-                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"],$registro["cd_ramal"])){
+                    if (isset($registro["cd_conexao"],$registro["cd_cliente"],$registro["id_conexao"],$registro["nm_terminal"],$registro["nm_programa"])){
                         $registro = $this->setParameters($columns,$registro);
-                        if ($id = RamalModel::set(...$registro)){
+                        if ($id = conexaoModel::set(...$registro)){
                             $result[] = "Ramal com Id ({$id}) atualizado com sucesso";
                         }
                         else{
@@ -79,11 +79,11 @@ class ramalController extends controllerAbstract{
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }
             elseif($this->requestType === 'POST' && $this->data){
-                $columns = ["nr_ramal","nm_funcionario","nr_telefone","nr_ip","nm_usuario","senha","obs"];
+                $columns = ["cd_cliente","id_conexao","nm_terminal","nm_programa","nr_caixa","nm_usuario","senha","obs"];
                 foreach ($this->data as $registro){
-                    if (isset($registro["nr_ramal"],$registro["nm_funcionario"])){
+                    if (isset($registro["cd_cliente"],$registro["id_conexao"],$registro["nm_terminal"],$registro["nm_programa"])){
                         $registro = $this->setParameters($columns,$registro);
-                        if ($id = RamalModel::set(...$registro)){
+                        if ($id = conexaoModel::set(...$registro)){
                             $result[] = "Ramal com Id ({$id}) inserido com sucesso";
                         }
                         else{
