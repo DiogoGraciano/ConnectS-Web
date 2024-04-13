@@ -9,6 +9,7 @@ use app\classes\elements;
 use app\classes\functions;
 use app\classes\filter;
 use app\models\main\conexaoModel;
+use app\db\cliente;
 
 class conexaoController extends controllerAbstract{
 
@@ -93,7 +94,7 @@ class conexaoController extends controllerAbstract{
 
         $programas = $elements->datalist("Programas","nm_programa",$dado->nm_programa,true);
 
-        $elements->setOptions("tb_cliente","cd_cliente","nm_cliente");
+        $elements->setOptions(new Cliente,"cd_cliente","nm_cliente");
         $cliente = $elements->select("Cliente","cd_cliente",$dado->cd_cliente);
                 
         $form->setDoisInputs($elements->input("id_conexao","Conexão:",$dado->id_conexao,true),      

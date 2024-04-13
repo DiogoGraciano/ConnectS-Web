@@ -1,6 +1,9 @@
 <?php
 namespace app\db;
 
+/**
+ * Classe para interação com a tabela 'tb_login' no banco de dados.
+ */
 class login extends db{
     public function __construct(){
         parent::__construct("tb_login");
@@ -26,6 +29,9 @@ class login extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+/**
+ * Classe para interação com a tabela 'tb_agendamento' no banco de dados.
+ */
 class agenda extends db{
     public function __construct(){
         parent::__construct("tb_agendamento");
@@ -51,6 +57,10 @@ class agenda extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+
+/**
+ * Classe para interação com a tabela 'tb_cliente' no banco de dados.
+ */
 class cliente extends db{
     public function __construct(){
         parent::__construct("tb_cliente");
@@ -76,6 +86,10 @@ class cliente extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+
+/**
+ * Classe para interação com a tabela 'tb_conexao' no banco de dados.
+ */
 class conexao extends db{
     public function __construct(){
         parent::__construct("tb_conexao");
@@ -101,6 +115,10 @@ class conexao extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+
+/**
+ * Classe para interação com a tabela 'tb_funcionario' no banco de dados.
+ */
 class funcionario extends db{
     public function __construct(){
         parent::__construct("tb_funcionario");
@@ -126,6 +144,10 @@ class funcionario extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+
+/**
+ * Classe para interação com a tabela 'tb_usuario' no banco de dados.
+ */
 class usuario extends db{
     public function __construct(){
         parent::__construct("tb_usuario");
@@ -151,6 +173,10 @@ class usuario extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
+
+/**
+ * Classe para interação com a tabela 'tb_login_api' no banco de dados.
+ */
 class loginApi extends db{
     public function __construct(){
         parent::__construct("tb_login_api");

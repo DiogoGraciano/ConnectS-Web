@@ -1,5 +1,6 @@
 <?php 
 namespace app\controllers\main;
+
 use app\classes\head;
 use app\classes\form;
 use app\classes\consulta;
@@ -11,6 +12,9 @@ use app\models\main\loginApiModel;
 
 class cadastroApiController extends controllerAbstract{
 
+    /**
+     * Método principal para exibir a página inicial do cadastro da API.
+     */
     public function index(){
 
         $head = new head();
@@ -29,7 +33,13 @@ class cadastroApiController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
-    public function manutencao($parameters){
+
+    /**
+     * Método para manutenção do cadastro de usuários da API.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
+    public function manutencao(array $parameters){
 
         $cd="";
 
@@ -57,7 +67,13 @@ class cadastroApiController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
-    public function action($parameters){
+
+    /**
+     * Método para realizar ações no cadastro de usuários da API.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
+    public function action(array $parameters){
 
         if ($parameters){
             loginApiModel::delete(functions::decrypt($parameters[0]));

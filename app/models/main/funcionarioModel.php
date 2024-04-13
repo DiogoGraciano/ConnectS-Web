@@ -36,7 +36,20 @@ class funcionarioModel{
         return $funcionario->selectAll();
     }
 
-    public static function set($nr_ramal,$nm_funcionario,$nr_telefone,$nr_ip,$nm_usuario,$senha,$obs,$cd_funcionario = ""){
+    /**
+     * Insere ou atualiza um registro na tabela 'funcionario'.
+     *
+     * @param string|int $nr_ramal Número do ramal.
+     * @param string $nm_funcionario Nome do funcionário.
+     * @param string $nr_telefone Número do telefone.
+     * @param string $nr_ip Número do IP.
+     * @param string $nm_usuario Nome do usuário.
+     * @param string $senha Senha do funcionário.
+     * @param string $obs Observações.
+     * @param string|int $cd_funcionario (Opcional) Código do funcionário para atualização.
+     * @return mixed Retorna o ID do registro inserido ou atualizado ou false em caso de erro.
+     */
+    public static function set(string|int $nr_ramal,string $nm_funcionario,string $nr_telefone,string $nr_ip,string $nm_usuario,string $senha,string $obs,string|int $cd_funcionario = ""){
 
         $funcionario = new funcionario;
 
@@ -116,7 +129,13 @@ class funcionarioModel{
         }
     }
 
-    public static function delete($cd){
+    /**
+     * Deleta um registro da tabela 'funcionario' com base no código.
+     *
+     * @param string|int $cd Código do registro a ser deletado.
+     * @return bool Retorna true se o registro foi deletado com sucesso, caso contrário, retorna false.
+    */
+    public static function delete(string|int $cd){
         return (new funcionario)->delete($cd);
     }
 

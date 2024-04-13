@@ -12,6 +12,9 @@ use app\models\main\funcionarioModel;
 
 class funcionarioController extends controllerAbstract{
 
+    /**
+     * Método principal para exibir a página inicial de consulta de funcionários.
+     */
     public function index(){
         $nm_funcionario = $this->getValue("nm_funcionario");
         $nr_ramal = $this->getValue("nr_ramal");
@@ -56,7 +59,13 @@ class funcionarioController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
-    public function manutencao($parameters){
+
+     /**
+     * Método para manutenção de um funcionário específico.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
+    public function manutencao(array $parameters){
     
         $cd = "";
 
@@ -92,7 +101,13 @@ class funcionarioController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
-    public function action($parameters){
+
+     /**
+     * Método para realizar ações no cadastro de funcionários.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
+    public function action(array $parameters){
 
         if ($parameters){
             funcionarioModel::delete(functions::decrypt($parameters[0]));
@@ -114,6 +129,9 @@ class funcionarioController extends controllerAbstract{
         $this->go("funcionario/manutencao/".functions::encrypt($cd_funcionario));
     }   
 
+    /**
+     * Método para exportar os dados dos funcionários para um arquivo CSV.
+    */
     public function export(){
         $this->go("tabela/exportar/tb_funcionario");
     }

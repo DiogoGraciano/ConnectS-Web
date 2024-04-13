@@ -5,11 +5,24 @@ use app\classes\mensagem;
 
 class clienteModel{
 
+    /**
+     * Obtém um registro específico da tabela 'agenda' com base no código.
+     *
+     * @param string $cd Código do registro a ser obtido.
+     * @return mixed Retorna o registro encontrado ou null se nenhum registro for encontrado.
+    */
     public static function get($cd = ""){
         return (new cliente)->get($cd);
     }
 
-    public static function getAll($nm_cliente,$nr_loja){
+    /**
+     * Obtém todos os registros da tabela 'cliente' com base nos filtros fornecidos.
+     *
+     * @param string $nm_cliente Nome do cliente (filtro opcional).
+     * @param string $nr_loja Número da loja (filtro opcional).
+     * @return array Retorna um array contendo todos os registros da tabela 'cliente' que correspondem aos filtros fornecidos.
+    */
+    public static function getAll(string $nm_cliente="",string $nr_loja=""){
         $cliente = new cliente;
 
         if($nm_cliente){
@@ -23,7 +36,15 @@ class clienteModel{
         return $cliente->selectAll();
     }
 
-    public static function set($nome,$nrloja,$cd = ""){
+    /**
+     * Insere ou atualiza um registro na tabela 'cliente'.
+     *
+     * @param string $nome Nome do cliente.
+     * @param string|int $nrloja Número da loja.
+     * @param string $cd (Opcional) Código do cliente para atualização.
+     * @return mixed Retorna o ID do registro inserido ou atualizado ou false em caso de erro.
+     */
+    public static function set(string $nome,string|int $nrloja,string|int $cd = ""){
 
         $cliente = new cliente;
 
@@ -72,7 +93,13 @@ class clienteModel{
         }
     }
 
-    public static function delete($cd){
+    /**
+     * Deleta um registro da tabela 'cliente' com base no código.
+     *
+     * @param string|int $cd Código do registro a ser deletado.
+     * @return bool Retorna true se o registro foi deletado com sucesso, caso contrário, retorna false.
+     */
+    public static function delete(string|int $cd){
         $retorno = (new cliente)->delete($cd);
 
         if ($retorno == true){
@@ -83,6 +110,11 @@ class clienteModel{
         return False;
     }
 
+    /**
+     * Exporta todos os registros da tabela 'cliente' para um arquivo CSV.
+     *
+     * @return bool Retorna true se a exportação foi bem-sucedida, caso contrário, retorna false.
+     */
     public static function export(){
         $cliente = new cliente;
         $results = $cliente->selectAll();

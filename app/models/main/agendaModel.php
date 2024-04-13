@@ -7,15 +7,33 @@ use app\classes\mensagem;
 
 class agendaModel{
 
+    /**
+     * Obtém um registro específico da tabela 'agenda' com base no código.
+     *
+     * @param string $cd Código do registro a ser obtido.
+     * @return mixed Retorna o registro encontrado ou null se nenhum registro for encontrado.
+     */
     public static function get($cd = ""){
         return (new agenda)->get($cd);
     }
 
+    /**
+     * Obtém todos os registros da tabela 'agenda'.
+     *
+     * @return array Retorna um array contendo todos os registros da tabela 'agenda'.
+     */
     public static function getAll(){
         return (new agenda)->getAll();
     }
 
-    public static function getEvents($dt_inicio,$dt_fim){
+    /**
+     * Obtém eventos entre duas datas específicas.
+     *
+     * @param string $dt_inicio Data inicial.
+     * @param string $dt_fim Data final.
+     * @return string Retorna um JSON contendo os eventos encontrados.
+     */
+    public static function getEvents(string $dt_inicio,string $dt_fim){
         $agenda = new agenda;
         $results = $agenda->addFilter("dt_inicio",">=",$dt_inicio)->addFilter("dt_fim","<=",$dt_fim)->selectAll();
 
@@ -35,6 +53,20 @@ class agendaModel{
         return json_encode($return);
     }
 
+     /**
+     * Insere ou atualiza um registro na tabela 'agenda'.
+     *
+     * @param mixed $cd_cliente Código do cliente.
+     * @param mixed $cd_funcionario Código do funcionário.
+     * @param mixed $titulo Título do evento.
+     * @param mixed $dt_inicio Data de início do evento.
+     * @param mixed $dt_fim Data de fim do evento.
+     * @param mixed $cor Cor do evento.
+     * @param mixed $obs Observação do evento.
+     * @param mixed $status Status do evento.
+     * @param mixed $cd_agenda (Opcional) Código da agenda para atualização.
+     * @return mixed Retorna o ID do registro inserido ou atualizado ou false em caso de erro.
+     */
     public static function set($cd_cliente,$cd_funcionario,$titulo,$dt_inicio,$dt_fim,$cor,$obs,$status,$cd_agenda=""){
 
         $agenda = new agenda;
@@ -124,7 +156,13 @@ class agendaModel{
         }
     }
 
-    public static function delete($cd){
+    /**
+     * Deleta um registro da tabela 'agenda' com base no código.
+     *
+     * @param int $cd Código do registro a ser deletado.
+     * @return bool Retorna true se o registro foi deletado com sucesso, caso contrário, retorna false.
+     */
+    public static function delete(int $cd){
         return (new agenda)->delete($cd);
     }
 

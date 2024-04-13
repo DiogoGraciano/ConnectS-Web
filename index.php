@@ -4,7 +4,7 @@
     use core\Controller;    
     use core\Method;
     use core\Parameter;
-    use app\classes\Uri;
+    use app\classes\functions;
 
     try {
 
@@ -13,7 +13,7 @@
         if (!isset($_SESSION))
             session_start();
 
-        if (isset($_SESSION["user"]) || str_contains(uri::getUri(),"/apiV1"))
+        if (isset($_SESSION["user"]) || str_contains(functions::getUri(),"/apiV1"))
             $controller = $controller->load();
         else 
             $controller = $controller->load("login");

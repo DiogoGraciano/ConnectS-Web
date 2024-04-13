@@ -5,11 +5,26 @@ use app\classes\mensagem;
 
 class conexaoModel{
 
-    public static function get($cd = ""){
+    /**
+     * Obtém um registro específico da tabela 'conexao' com base no código.
+     *
+     * @param int|string $cd Código do registro a ser obtido.
+     * @return mixed Retorna o registro encontrado ou null se nenhum registro for encontrado.
+     */
+    public static function get(int|string $cd = ""){
         return (new conexao)->get($cd);
     }
 
-    public static function getAll($nm_cliente="",$nm_terminal="",$nm_programa="",$nm_usuario=""){
+    /**
+     * Obtém todos os registros da tabela 'conexao' com base nos filtros fornecidos.
+     *
+     * @param string $nm_cliente Nome do cliente (filtro opcional).
+     * @param string $nm_terminal Nome do terminal (filtro opcional).
+     * @param string $nm_programa Nome do programa (filtro opcional).
+     * @param string $nm_usuario Nome do usuário (filtro opcional).
+     * @return array Retorna um array contendo todos os registros da tabela 'conexao' que correspondem aos filtros fornecidos.
+    */
+    public static function getAll(string $nm_cliente="",string $nm_terminal="",string $nm_programa="",string $nm_usuario=""){
         $conexoes = (new conexao)->addJoin("LEFT","tb_cliente","tb_cliente.cd_cliente","tb_conexao.cd_cliente");
 
         if($nm_cliente){
@@ -32,7 +47,21 @@ class conexaoModel{
                     "nr_caixa","nm_programa","nm_usuario","senha","obs");
     }
 
-    public static function set($cd_cliente,$id_conexao,$nm_terminal,$nm_programa,$nr_caixa,$nm_usuario,$senha,$obs,$cd_conexao = ""){
+    /**
+     * Insere ou atualiza um registro na tabela 'conexao'.
+     *
+     * @param string|int $cd_cliente Código do cliente.
+     * @param string $id_conexao Identificador da conexão.
+     * @param string $nm_terminal Nome do terminal.
+     * @param string $nm_programa Nome do programa.
+     * @param string|int $nr_caixa Número do caixa.
+     * @param string $nm_usuario Nome do usuário.
+     * @param string $senha Senha da conexão.
+     * @param string $obs Observações.
+     * @param string|int $cd_conexao (Opcional) Código da conexão para atualização.
+     * @return mixed Retorna o ID do registro inserido ou atualizado ou false em caso de erro.
+     */
+    public static function set(string|int $cd_cliente,string $id_conexao,string $nm_terminal,string $nm_programa,string|int $nr_caixa,string $nm_usuario,string $senha,string $obs,string|int $cd_conexao = ""){
 
         $conexao = (new conexao);
 
@@ -93,7 +122,13 @@ class conexaoModel{
         }
     }
 
-    public static function delete($cd){
+    /**
+     * Deleta um registro da tabela 'conexao' com base no código.
+     *
+     * @param string|int $cd Código do registro a ser deletado.
+     * @return bool Retorna true se o registro foi deletado com sucesso, caso contrário, retorna false.
+     */
+    public static function delete(string|int $cd){
         $retorno = (new conexao)->delete($cd);
 
         if ($retorno == true){
@@ -105,6 +140,11 @@ class conexaoModel{
         return False;
     }
 
+    /**
+     * Exporta todos os registros da tabela 'conexao' para um arquivo CSV.
+     *
+     * @return bool Retorna true se a exportação foi bem-sucedida, caso contrário, retorna false.
+    */
     public static function export(){
 
         $results = self::getAll();

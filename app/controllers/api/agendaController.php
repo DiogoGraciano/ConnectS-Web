@@ -1,5 +1,6 @@
 <?php 
 namespace app\controllers\api;
+
 use app\classes\controllerAbstract;
 use app\models\main\agendaModel;
 use app\classes\mensagem;
@@ -7,23 +8,51 @@ use Exception;
 
 class agendaController extends controllerAbstract{
 
+    /**
+     * Tipo de requisição HTTP (GET, POST, PUT, DELETE).
+     * 
+     * @var string
+     */
     private $requestType;
+
+    /**
+     * Dados enviados na requisição.
+     * 
+     * @var mixed
+     */
     private $data;
 
-    public function __construct($requestType,$data){
+    /**
+     * Construtor da classe.
+     *
+     * @param string $requestType Tipo de requisição HTTP.
+     * @param mixed $data Dados enviados na requisição.
+     */
+    public function __construct($requestType, $data){
         $this->requestType = $requestType;
         $this->data = $data;
     }
+
+    /**
+     * Obtém a lista de agendas.
+     *
+     * @param array $parameters Parâmetros da requisição.
+     */
     public function getList($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET))
                 echo json_encode(["result" => agendaModel::getAll()]);
-
         } catch(Exception $e) {
             echo json_encode(['error' => $e->getMessage(),"result" => false]);
             http_response_code(400);
         }
     }
+
+    /**
+     * Obtém agendas por IDs ou deleta agendas por IDs.
+     *
+     * @param array $parameters Parâmetros da requisição.
+     */
     public function getByIds($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET)){
@@ -50,7 +79,7 @@ class agendaController extends controllerAbstract{
                 }
                 echo json_encode(["result" => $agendas, "errors" => $errors]);
             }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                echo json_encode(['error' => "Modo da requisição inválido ou Json enviado inválido","result" => false]); 
                 http_response_code(400);
             }
         } catch(Exception $e) {
@@ -58,7 +87,11 @@ class agendaController extends controllerAbstract{
             http_response_code(400);
         }
     }
-    public function set($parameters){
+
+    /**
+     * Define ou atualiza agendas.
+     */
+    public function set(){
         try {
             $errors = [];
             $result = []; 
@@ -75,7 +108,7 @@ class agendaController extends controllerAbstract{
                         }
                     }
                     else
-                        $errors[] = "agenda não Informado corretamente";
+                        $errors[] = "agenda não informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }
@@ -92,11 +125,11 @@ class agendaController extends controllerAbstract{
                         }
                     }
                     else
-                        $errors[] = "agenda não Informado corretamente";
+                        $errors[] = "agenda não informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                echo json_encode(['error' => "Modo da requisição inválido ou Json enviado inválido","result" => false]); 
                 http_response_code(400);
             }
         } catch(Exception $e) {

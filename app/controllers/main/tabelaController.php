@@ -15,6 +15,9 @@ class tabelaController extends controllerAbstract{
 
     private $tabela;
 
+    /**
+     * Array de nomes amigáveis para colunas da tabela.
+    */
     const nomes = [
         "cd_cliente" => "Código do Cliente",
         "nm_cliente" => "Nome do Cliente",
@@ -41,20 +44,36 @@ class tabelaController extends controllerAbstract{
         "nm_terminal" => "Nome do Terminal"
     ];
 
-    private function getNomeAmigavel($coluna){
+    /**
+     * Obtém o nome amigável da coluna.
+     *
+     * @param string $coluna Nome da coluna.
+     * @return string Nome amigável da coluna ou o próprio nome da coluna se não estiver no array de nomes.
+    */
+    private function getNomeAmigavel(string $coluna){
         if (array_key_exists($coluna,$this::nomes))
             return $this::nomes[$coluna];
         else 
             return $coluna;
     }
 
-    private function getNomeColuna($coluna){
+    /**
+     * Obtém o nome da coluna pelo nome amigável.
+     *
+     * @param string $coluna Nome amigável da coluna.
+     * @return string Nome da coluna correspondente ou False se não encontrado.
+     */
+    private function getNomeColuna(string $coluna){
         if ($key = array_search($coluna,$this::nomes))
             return $key;
         else 
             return False;
     }
 
+    /**
+     * Método principal para exibir opções de importação/exportação.
+     * Mostra opções para exportar ou importar tabelas.
+    */
     public function index(){
         $head = new head();
         $head->show("Importar/Exportar","");
@@ -70,6 +89,9 @@ class tabelaController extends controllerAbstract{
         $footer->show();
     }
 
+    /**
+     * Exibe opções para importação de tabela.
+    */
     public function tabela_importar(){
         $head = new head();
         $head->show("Selecione a tabela","");
@@ -87,6 +109,9 @@ class tabelaController extends controllerAbstract{
         $footer->show();
     }
 
+    /**
+     * Exibe opções para exportação de tabela.
+    */
     public function tabela_exportar(){
         $head = new head();
         $head->show("Selecione a tabela","");
@@ -104,6 +129,11 @@ class tabelaController extends controllerAbstract{
         $footer->show();
     }
 
+    /**
+     * Exporta dados da tabela selecionada para um arquivo CSV.
+     *
+     * @param array $tabela Nome da tabela a ser exportada.
+    */
     public function exportar($tabela=[]){
 
         if (array_key_exists(0,$tabela)){
@@ -116,8 +146,6 @@ class tabelaController extends controllerAbstract{
             $colunas = $db->getColumns();
 
             $elements = new elements();
-
-            $customs = [];
 
             if ($colunas){
                 $i = 0;
@@ -151,6 +179,11 @@ class tabelaController extends controllerAbstract{
         }
     }
 
+    /**
+     * Importa dados de um arquivo CSV para a tabela selecionada.
+     *
+     * @param array $tabela Nome da tabela para importação.
+    */
     public function importar($tabela=[]){
 
         if (array_key_exists(0,$tabela)){
@@ -176,6 +209,11 @@ class tabelaController extends controllerAbstract{
         }
     }
     
+    /**
+     * Processa a ação de exportação ou importação de dados.
+     *
+     * @param array $tabela Array contendo o modo (exportar ou importar) e o nome da tabela.
+     */
     public function action($tabela=[]){
         try{
             if (array_key_exists(0,$tabela) && array_key_exists(1,$tabela)){

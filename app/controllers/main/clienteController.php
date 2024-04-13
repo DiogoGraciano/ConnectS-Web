@@ -1,5 +1,6 @@
 <?php 
 namespace app\controllers\main;
+
 use app\classes\head;
 use app\classes\form;
 use app\classes\consulta;
@@ -12,6 +13,9 @@ use app\models\main\clienteModel;
 
 class clienteController extends controllerAbstract{
 
+    /**
+     * Método principal para exibir a página inicial de manutenção de clientes.
+     */
     public function index(){
 
         $nm_cliente = $this->getValue("nm_cliente");
@@ -42,6 +46,12 @@ class clienteController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
+
+    /**
+     * Método para manutenção de um cliente específico.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
     public function manutencao($parameters){
 
         $cd="";
@@ -69,6 +79,12 @@ class clienteController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
+
+    /**
+     * Método para realizar ações no cadastro de clientes.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
     public function action($parameters){
 
         if ($parameters){
@@ -86,6 +102,10 @@ class clienteController extends controllerAbstract{
         $this->go("cliente/manutencao/".functions::encrypt($cd));
         
     }
+
+    /**
+     * Método para exportar os dados dos clientes para um arquivo CSV.
+     */
     public function export(){
         
         if (clienteModel::export())

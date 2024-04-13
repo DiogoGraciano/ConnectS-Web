@@ -1,5 +1,6 @@
 <?php 
 namespace app\controllers\main;
+
 use app\classes\head;
 use app\classes\form;
 use app\classes\consulta;
@@ -11,6 +12,9 @@ use app\models\main\loginModel;
 
 class cadastroController extends controllerAbstract{
 
+    /**
+     * Método principal para exibir a página inicial do cadastro do sistema.
+     */
     public function index(){
 
         $head = new head();
@@ -29,6 +33,12 @@ class cadastroController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
+
+    /**
+     * Método para manutenção do cadastro de usuários do sistema.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
     public function manutencao($parameters){
 
         $cd="";
@@ -57,6 +67,12 @@ class cadastroController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
+
+    /**
+     * Método para realizar ações no cadastro de usuários do sistema.
+     *
+     * @param array $parameters Parâmetros recebidos pela URL.
+     */
     public function action($parameters){
 
         if ($parameters){

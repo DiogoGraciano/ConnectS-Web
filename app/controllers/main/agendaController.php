@@ -7,9 +7,14 @@ use app\classes\controllerAbstract;
 use app\classes\elements;
 use app\classes\footer;
 use app\models\main\agendaModel;
+use app\db\funcionario;
+use app\db\cliente;
 
 class agendaController extends controllerAbstract{
 
+    /**
+     * Mostra a página inicial da agenda.
+     */
     public function index(){
         $head = new head();
         $head->show("Agenda","agenda","Agenda");
@@ -23,7 +28,13 @@ class agendaController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
-    public function manutencao($parameters){
+
+    /**
+     * Mostra a página de manutenção da agenda.
+     *
+     * @param array $parameters Parâmetros da URL.
+     */
+    public function manutencao(array $parameters){
 
         $cd = "";
         $dt_fim = "";
@@ -49,10 +60,10 @@ class agendaController extends controllerAbstract{
 
         $status = $elements->select("Status","status ",$dado->status,true);
 
-        $elements->setOptions("tb_funcionario","cd_funcionario","nm_funcionario");
+        $elements->setOptions(new Funcionario,"cd_funcionario","nm_funcionario");
         $funcionario = $elements->select("Funcionario","cd_funcionario",$dado->cd_funcionario,true);
 
-        $elements->setOptions("tb_cliente","cd_cliente","nm_cliente");
+        $elements->setOptions(new Cliente,"cd_cliente","nm_cliente");
         $cliente = $elements->select("Cliente","cd_cliente",$dado->cd_cliente,true);
 
         $form->setHidden("cd",$cd);
@@ -76,7 +87,13 @@ class agendaController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
-    public function action($parameters){
+
+    /**
+     * Realiza a ação de adicionar ou atualizar um registro da agenda.
+     *
+     * @param array $parameters Parâmetros da URL.
+     */
+    public function action(array $parameters){
 
         if ($parameters){
             agendaModel::delete($parameters[0]);
@@ -98,6 +115,9 @@ class agendaController extends controllerAbstract{
         $this->go("agenda/manutencao/".$cd_agenda);
     }
 
+    /**
+     * Redireciona para a página de exportação.
+     */
     public function export(){
         $this->go("tabela/exportar/tb_agenda");
     }

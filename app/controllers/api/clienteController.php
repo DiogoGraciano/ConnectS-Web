@@ -1,28 +1,57 @@
 <?php 
 namespace app\controllers\api;
+
 use app\classes\controllerAbstract;
 use app\models\main\clienteModel;
 use Exception;
 
 class clienteController extends controllerAbstract{
 
+    /**
+     * Tipo de requisição HTTP (GET, POST, PUT, DELETE).
+     *
+     * @var string
+     */
     private $requestType;
+
+    /**
+     * Dados enviados na requisição.
+     *
+     * @var mixed
+     */
     private $data;
 
-    public function __construct($requestType,$data){
+    /**
+     * Construtor da classe.
+     *
+     * @param string $requestType Tipo de requisição HTTP.
+     * @param mixed $data Dados enviados na requisição.
+     */
+    public function __construct($requestType, $data){
         $this->requestType = $requestType;
         $this->data = $data;
     }
-    public function getList($parameters){
+
+    /**
+     * Obtém a lista de clientes.
+     * @param array $parameters Parâmetros da requisição.
+     */
+    public function getList(){
         try {
             if ($this->requestType === 'GET' && empty($_GET))
                 echo json_encode(["result" => clienteModel::getAll()]);
 
         } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            echo json_encode(['error' => $e->getMessage(), "result" => false]);
             http_response_code(400);
         }
     }
+
+    /**
+     * Obtém clientes por IDs ou deleta clientes por IDs.
+     *
+     * @param array $parameters Parâmetros da requisição.
+     */
     public function getByIds($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET)){
@@ -49,22 +78,26 @@ class clienteController extends controllerAbstract{
                 }
                 echo json_encode(["result" => $clientes, "errors" => $errors]);
             }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                echo json_encode(['error' => "Modo da requisição inválido ou JSON enviado inválido", "result" => false]); 
                 http_response_code(400);
             }
         } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            echo json_encode(['error' => $e->getMessage(), "result" => false]);
             http_response_code(400);
         }
     }
-    public function set($parameters){
+
+    /**
+     * Insere ou atualiza clientes.
+    */
+    public function set(){
         try {
             $errors = [];
             $result = []; 
             if ($this->requestType === 'PUT' && $this->data){
                foreach ($this->data as $cliente){
-                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
-                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"],$cliente["cd_cliente"])){
+                    if (isset($cliente["nm_cliente"], $cliente["nr_loja"], $cliente["cd_cliente"])){
+                        if ($cliente = clienteModel::set($cliente["nm_cliente"], $cliente["nr_loja"], $cliente["cd_cliente"])){
                             $result[] = "Cliente com Id ({$cliente}) atualizado com sucesso";
                         }
                         else{
@@ -72,30 +105,30 @@ class clienteController extends controllerAbstract{
                         }
                     }
                     else
-                        $errors[] = "Cliente não Informado corretamente";
+                        $errors[] = "Cliente não informado corretamente";
                }
                echo json_encode(["result" => $result, "errors" => $errors]);
             }
             elseif($this->requestType === 'POST' && $this->data){
                 foreach ($this->data as $cliente){
-                    if (isset($cliente["nm_cliente"],$cliente["nr_loja"])){
-                        if ($cliente = clienteModel::set($cliente["nm_cliente"],$cliente["nr_loja"])){
+                    if (isset($cliente["nm_cliente"], $cliente["nr_loja"])){
+                        if ($cliente = clienteModel::set($cliente["nm_cliente"], $cliente["nr_loja"])){
                             $result[] = "Cliente com Id ({$cliente}) inserido com sucesso";
                         }
                         else{
-                            $errors[] = "Cliente não inserido, verifique se o nome do cliente ja está cadastrado";
+                            $errors[] = "Cliente não inserido, verifique se o nome do cliente já está cadastrado";
                         }
                     }
                     else
-                        $errors[] = "Cliente não Informado corretamente";
+                        $errors[] = "Cliente não informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                echo json_encode(['error' => "Modo da requisição inválido ou JSON enviado inválido", "result" => false]); 
                 http_response_code(400);
             }
         } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            echo json_encode(['error' => $e->getMessage(), "result" => false]);
         }
     }
 }

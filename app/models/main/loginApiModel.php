@@ -6,26 +6,52 @@ use stdClass;
 
 class loginApiModel{
 
-    public static function login($nm_usuario,$senha){
+    /**
+     * Realiza o login do usuário.
+     *
+     * @param string $nm_usuario Nome do usuário.
+     * @param string $senha Senha do usuário.
+     * @return bool Retorna true se o login for bem-sucedido, caso contrário, retorna false.
+     */
+    public static function login(string $nm_usuario,string $senha){
         $login = new loginApi;
         $login = $login->get($nm_usuario,"nm_usuario");
 
         if ($login && password_verify($senha,$login->senha)){
-                return True;
+            return True;
         }
 
         return False;
     }
 
-    public static function get($cd){
+    /**
+     * Obtém um registro específico da tabela 'loginApi' com base no código.
+     *
+     * @param string|int $cd Código do registro a ser obtido.
+     * @return mixed Retorna o registro encontrado ou null se nenhum registro for encontrado.
+     */
+    public static function get(string|int $cd){
         return (new loginApi)->get($cd); 
     }
 
+    /**
+     * Obtém todos os registros da tabela 'loginApi'.
+     *
+     * @return array Retorna um array contendo todos os registros da tabela 'loginApi'.
+     */
     public static function getAll(){
         return (new loginApi)->selectColumns("cd_login_api","nm_usuario"); 
     }
 
-    public static function set($nm_usuario,$senha,$cd_login_api = ""){
+    /**
+     * Insere ou atualiza um registro na tabela 'loginApi'.
+     *
+     * @param string $nm_usuario Nome do usuário.
+     * @param string $senha Senha do usuário.
+     * @param string|int $cd_login_api (Opcional) Código do registro para atualização.
+     * @return mixed Retorna o ID do registro inserido ou atualizado ou false em caso de erro.
+     */
+    public static function set(string $nm_usuario,string $senha,string|int $cd_login_api = ""){
 
         $login = new loginApi;
 
@@ -89,7 +115,13 @@ class loginApiModel{
         }
     }
 
-    public static function delete($cd){
+    /**
+     * Deleta um registro da tabela 'loginApi' com base no código.
+     *
+     * @param string $cd Código do registro a ser deletado.
+     * @return bool Retorna true se o registro foi deletado com sucesso, caso contrário, retorna false.
+     */
+    public static function delete(string|int $cd){
         return (new loginApi)->delete($cd);
     }
 

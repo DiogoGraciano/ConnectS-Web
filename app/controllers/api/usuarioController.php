@@ -1,5 +1,6 @@
 <?php 
 namespace app\controllers\api;
+
 use app\classes\controllerAbstract;
 use app\models\main\usuarioModel;
 use app\classes\mensagem;
@@ -7,23 +8,50 @@ use Exception;
 
 class usuarioController extends controllerAbstract{
 
+    /**
+     * Tipo de requisição HTTP (GET, POST, PUT, DELETE).
+     *
+     * @var string
+     */
     private $requestType;
+
+    /**
+     * Dados enviados na requisição.
+     *
+     * @var mixed
+     */
     private $data;
 
-    public function __construct($requestType,$data){
+    /**
+     * Construtor da classe.
+     *
+     * @param string $requestType Tipo de requisição HTTP.
+     * @param mixed $data Dados enviados na requisição.
+     */
+    public function __construct($requestType, $data){
         $this->requestType = $requestType;
         $this->data = $data;
     }
-    public function getList($parameters){
+
+    /**
+     * Obtém a lista de usuários.
+     *
+     */
+    public function getList(){
         try {
             if ($this->requestType === 'GET' && empty($_GET))
                 echo json_encode(["result" => usuarioModel::getAll()]);
 
         } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            echo json_encode(['error' => $e->getMessage(), "result" => false]);
             http_response_code(400);
         }
     }
+
+    /**
+     * Obtém usuários por IDs ou deleta usuários por IDs.
+     *
+     */
     public function getByIds($parameters){
         try {
             if ($this->requestType === 'GET' && empty($_GET)){
@@ -34,7 +62,7 @@ class usuarioController extends controllerAbstract{
                     if ($usuario->cd_usuario)
                         $usuarios[] = $usuario;
                     else 
-                        $errors[] = "usuario com Id ({$id}) não encontrado";
+                        $errors[] = "Usuário com Id ({$id}) não encontrado";
                 }
                 echo json_encode(["result" => $usuarios, "errors" => $errors]);
             }
@@ -44,20 +72,25 @@ class usuarioController extends controllerAbstract{
                 foreach ($parameters as $id){
                     $usuario = usuarioModel::get($id);
                     if ($usuario->cd_usuario && usuarioModel::delete($usuario->cd_usuario)){
-                        $usuarios[] = "usuario com Id ({$id}) deletado com sucesso";
+                        $usuarios[] = "Usuário com Id ({$id}) deletado com sucesso";
                     }else 
-                        $errors[] = "usuario com Id ({$id}) não encontrado";
+                        $errors[] = "Usuário com Id ({$id}) não encontrado";
                 }
                 echo json_encode(["result" => $usuarios, "errors" => $errors]);
             }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                echo json_encode(['error' => "Modo da requisição inválido ou JSON enviado inválido", "result" => false]); 
                 http_response_code(400);
             }
         } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            echo json_encode(['error' => $e->getMessage(), "result" => false]);
             http_response_code(400);
         }
     }
+
+    /**
+     * Insere ou atualiza usuários.
+     *
+     */
     public function set($parameters){
         try {
             $errors = [];
@@ -68,14 +101,14 @@ class usuarioController extends controllerAbstract{
                     if (isset($registro["cd_cliente"],$registro["nm_terminal"],$registro["nm_sistema"],$registro["nm_usuario"],$registro["senha"],$registro["cd_usuario"])){
                         $registro = $this->setParameters($columns,$registro);
                         if ($id = usuarioModel::set(...$registro)){
-                            $result[] = "usuario com Id ({$id}) atualizado com sucesso";
+                            $result[] = "Usuário com Id ({$id}) atualizado com sucesso";
                         }
                         else{
                             $errors[] = mensagem::getErro();
                         }
                     }
                     else
-                        $errors[] = "usuario não Informado corretamente";
+                        $errors[] = "Usuário não informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }
@@ -85,22 +118,22 @@ class usuarioController extends controllerAbstract{
                     if (isset($registro["cd_cliente"],$registro["nm_terminal"],$registro["nm_sistema"],$registro["nm_usuario"],$registro["senha"])){
                         $registro = $this->setParameters($columns,$registro);
                         if ($id = usuarioModel::set(...$registro)){
-                            $result[] = "usuario com Id ({$id}) inserido com sucesso";
+                            $result[] = "Usuário com Id ({$id}) inserido com sucesso";
                         }
                         else{
                             $errors[] = mensagem::getErro();
                         }
                     }
                     else
-                        $errors[] = "usuario não Informado corretamente";
+                        $errors[] = "Usuário não informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }else{
-                echo json_encode(['error' => "Modo da requisão invalido ou Json enviado invalido","result" => false]); 
+                echo json_encode(['error' => "Modo da requisição inválido ou JSON enviado inválido", "result" => false]); 
                 http_response_code(400);
             }
         } catch(Exception $e) {
-            echo json_encode(['error' => $e->getMessage(),"result" => false]);
+            echo json_encode(['error' => $e->getMessage(), "result" => false]);
         }
     }
 }

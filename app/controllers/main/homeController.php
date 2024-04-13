@@ -8,6 +8,10 @@ use app\models\main\loginModel;
 
 class homeController extends controllerAbstract{
 
+     /**
+     * Método principal para exibir a página inicial (dashboard) do sistema.
+     * Mostra o menu principal e outras funcionalidades disponíveis para o usuário.
+     */
     public function index(){
 
         $head = new head();
@@ -29,6 +33,11 @@ class homeController extends controllerAbstract{
         $footer = new footer;
         $footer->show();
     }
+    
+     /**
+     * Método para deslogar o usuário do sistema.
+     * Realiza o logout e redireciona para a página de login.
+     */
     public function deslogar(){
         loginModel::deslogar();
         $this->go("login");

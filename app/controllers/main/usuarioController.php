@@ -9,6 +9,7 @@ use app\classes\footer;
 use app\classes\elements;
 use app\classes\functions;
 use app\models\main\usuarioModel;
+use app\db\cliente;
 
 class usuarioController extends controllerAbstract{
 
@@ -71,7 +72,7 @@ class usuarioController extends controllerAbstract{
 
         $form->setHidden("cd",$cd);
 
-        $elements->setOptions("tb_cliente","cd_cliente","nm_cliente");
+        $elements->setOptions(new Cliente,"cd_cliente","nm_cliente");
         $cliente = $elements->select("Cliente","cd_cliente");
 
         $elements->addOption("Balcão","Balcão")
@@ -112,7 +113,7 @@ class usuarioController extends controllerAbstract{
     public function action($parameters){
     
         if ($parameters){
-            usuarioModel::delete(functions::encrypt($parameters[0]));
+            usuarioModel::delete(functions::decrypt($parameters[0]));
             $this->go("usuario");
             return;
         }
