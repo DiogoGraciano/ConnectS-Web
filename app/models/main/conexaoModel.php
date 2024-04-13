@@ -11,7 +11,7 @@ class conexaoModel{
 
     public static function getAll(){
         return (new conexao)
-        ->addJoin("INNER","tb_cliente","tb_cliente.cd_cliente","tb_conexao.cd_cliente")
+        ->addJoin("LEFT","tb_cliente","tb_cliente.cd_cliente","tb_conexao.cd_cliente")
         ->selectColumns("cd_conexao","nm_cliente","nr_loja","id_conexao","nm_terminal",
                     "nr_caixa","nm_programa","nm_usuario","senha","obs");
     }
@@ -39,7 +39,7 @@ class conexaoModel{
 
             if ($retorno == true){
                 mensagem::setSucesso("Atualizado com Sucesso");
-                return True;
+                return $conexao->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");
@@ -64,7 +64,7 @@ class conexaoModel{
 
             if ($retorno == true){
                 mensagem::setSucesso("Criado com Sucesso");
-                return True;
+                return $conexao->getLastId();
             }
             else {
                 mensagem::setErro("Erro ao execultar a ação tente novamente");
