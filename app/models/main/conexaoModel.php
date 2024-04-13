@@ -9,10 +9,26 @@ class conexaoModel{
         return (new conexao)->get($cd);
     }
 
-    public static function getAll(){
-        return (new conexao)
-        ->addJoin("LEFT","tb_cliente","tb_cliente.cd_cliente","tb_conexao.cd_cliente")
-        ->selectColumns("cd_conexao","nm_cliente","nr_loja","id_conexao","nm_terminal",
+    public static function getAll($nm_cliente="",$nm_terminal="",$nm_programa="",$nm_usuario=""){
+        $conexoes = (new conexao)->addJoin("LEFT","tb_cliente","tb_cliente.cd_cliente","tb_conexao.cd_cliente");
+
+        if($nm_cliente){
+            $conexoes->addFilter("nm_cliente","LIKE","%".$nm_cliente."%");
+        }
+
+        if($nm_terminal){
+            $conexoes->addFilter("nm_terminal","LIKE","%".$nm_terminal."%");
+        }
+
+        if($nm_programa){
+            $conexoes->addFilter("nm_programa","LIKE","%".$nm_programa."%");
+        }
+
+        if($nm_usuario){
+            $conexoes->addFilter("nm_usuario","LIKE","%".$nm_usuario."%");
+        }
+
+        return $conexoes->selectColumns("cd_conexao","nm_cliente","nr_loja","id_conexao","nm_terminal",
                     "nr_caixa","nm_programa","nm_usuario","senha","obs");
     }
 

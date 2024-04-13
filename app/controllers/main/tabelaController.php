@@ -29,9 +29,9 @@ class tabelaController extends controllerAbstract{
         "nr_caixa" => "Número do Caixa",
         "cd_login" => "Código de Login",
         "nm_usuario" => "Nome de Usuário",
-        "cd_ramal" => "Código do Ramal",
+        "cd_funcionario" => "Código do funcionario",
         "nm_funcionario" => "Nome do Funcionário",
-        "nr_ramal" => "Número do Ramal",
+        "nr_ramal" => "Número do funcionario",
         "nr_telefone" => "Número do Telefone",
         "nr_ip" => "Número IP",
         "nm_usuario" => "Nome de Usuário",
@@ -78,7 +78,7 @@ class tabelaController extends controllerAbstract{
         $menu->addMenu($this->url."tabela/importar/".functions::encrypt("tb_cliente"),"Cliente")
             ->addMenu($this->url."tabela/Importar/".functions::encrypt("tb_conexao"),"Conexão")
             ->addMenu($this->url."tabela/importar/".functions::encrypt("tb_usuario"),"Usuario")
-            ->addMenu($this->url."tabela/importar/".functions::encrypt("tb_ramal"),"Ramal")
+            ->addMenu($this->url."tabela/importar/".functions::encrypt("tb_funcionario"),"funcionario")
             ->addMenu($this->url."tabela","Voltar");
         
         $menu->show("Selecione a tabela");
@@ -95,7 +95,7 @@ class tabelaController extends controllerAbstract{
         $menu->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_cliente"),"Cliente")
             ->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_conexao"),"Conexão")
             ->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_usuario"),"Usuario")
-            ->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_ramal"),"Ramal")
+            ->addMenu($this->url."tabela/exportar/".functions::encrypt("tb_funcionario"),"funcionario")
             ->addMenu($this->url."tabela","Voltar");
         
         $menu->show("Selecione a tabela");

@@ -49,7 +49,7 @@ class agendaController extends controllerAbstract{
 
         $status = $elements->select("Status","status ",$dado->status,true);
 
-        $elements->setOptions("tb_ramal","cd_ramal","nm_funcionario");
+        $elements->setOptions("tb_funcionario","cd_funcionario","nm_funcionario");
         $funcionario = $elements->select("Funcionario","cd_funcionario",$dado->cd_funcionario,true);
 
         $elements->setOptions("tb_cliente","cd_cliente","nm_cliente");

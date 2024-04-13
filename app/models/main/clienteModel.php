@@ -9,8 +9,18 @@ class clienteModel{
         return (new cliente)->get($cd);
     }
 
-    public static function getAll(){
-        return (new cliente)->getAll();
+    public static function getAll($nm_cliente,$nr_loja){
+        $cliente = new cliente;
+
+        if($nm_cliente){
+            $cliente->addFilter("nm_cliente","LIKE","%".$nm_cliente."%");
+        }
+
+        if($nr_loja){
+            $cliente->addFilter("nr_loja","=",$nr_loja);
+        }
+
+        return $cliente->selectAll();
     }
 
     public static function set($nome,$nrloja,$cd = ""){

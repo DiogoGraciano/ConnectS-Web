@@ -13,8 +13,10 @@ class filter extends pagina{
         $this->tplform->action = $action;
     }
 
-    public function setLinha(){
+    public function addLinha(){
         $this->tplform->block("BLOCK_LINHA_FILTER");
+        
+        return $this;
     }
 
     public function addFilter($tamanho, $input){
@@ -22,14 +24,19 @@ class filter extends pagina{
         $this->tplform->filter = $input;
         $this->tplform->block("BLOCK_INPUT");
         $this->tplform->block("BLOCK_FILTER");
+
+        return $this;
     }
 
     public function addbutton($button){
         $this->tplform->button = $button;
         $this->tplform->block("BLOCK_BUTTON");
+
+        return $this;
     }
 
     public function show(){
+        $this->addLinha();
         $this->tplform->show();
     }
 }

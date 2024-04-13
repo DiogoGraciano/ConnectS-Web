@@ -9,16 +9,44 @@ class usuarioModel{
         return (new usuario)->get($cd);
     }
 
-    public static function getAll(){
-        return (new usuario)->addJoin("LEFT","tb_cliente","tb_cliente.cd_cliente","tb_usuario.cd_cliente")
-                        ->selectColumns("cd_usuario","nm_cliente","nr_loja","nm_terminal","nm_sistema","nm_usuario","senha","obs");
+    public static function getAll($nm_cliente="",$nm_terminal="",$nm_sistema="",$nm_usuario=""){
+
+        $usuarios = (new usuario)->addJoin("LEFT","tb_cliente","tb_cliente.cd_cliente","tb_usuario.cd_cliente");
+
+        if($nm_cliente){
+            $usuarios->addFilter("nm_cliente","LIKE","%".$nm_cliente."%");
+        }
+
+        if($nm_terminal){
+            $usuarios->addFilter("nm_terminal","LIKE","%".$nm_terminal."%");
+        }
+
+        if($nm_sistema){
+            $usuarios->addFilter("nm_sistema","LIKE","%".$nm_sistema."%");
+        }
+
+        if($nm_usuario){
+            $usuarios->addFilter("nm_usuario","LIKE","%".$nm_usuario."%");
+        }
+        
+        return $usuarios->selectColumns("cd_usuario","nm_cliente","nr_loja","nm_terminal","nm_sistema","nm_usuario","senha","obs");;
     }
 
     public static function set($cd_cliente,$nm_terminal,$nm_sistema,$nm_usuario,$senha,$obs,$cd = ""){
 
         $usuario = new usuario;
 
-        if($cd && $cd_cliente && $nm_terminal && $nm_usuario && $nm_usuario && $senha){
+        if (!clienteModel::get($cd_cliente)->cd_cliente){
+            mensagem::setErro("Cliente não existe");
+            return False;
+        }
+
+        if (!$nm_terminal || !$nm_sistema || !$nm_usuario || !$senha){
+            mensagem::setErro("Um dos campos obrigatorios *Nome do Terminal* ou *Nome do Sistema* ou *Nome do Usuario* ou *Senha* não foi informado");
+            return False;
+        }
+
+        if($cd && $cd_cliente && $nm_terminal && $nm_sistema && $nm_usuario && $senha){
         
             $values = $usuario->getObject();
 
@@ -34,13 +62,11 @@ class usuarioModel{
                 $retorno = $usuario->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso("Criado com Sucesso");
-                $usuario->getLastId();
+                mensagem::setSucesso("Atualizado com Sucesso");
+                return $usuario->getLastId();
             }
             else {
-                $Mensagems = ($usuario->getError());
                 mensagem::setErro("Erro ao execultar a ação tente novamente");
-                mensagem::addErro($Mensagems);
                 return False;
             }
 
@@ -59,11 +85,11 @@ class usuarioModel{
                 $retorno = $usuario->store($values);
 
             if ($retorno == true){
-                mensagem::setSucesso("Atualizado com Sucesso");
-                $usuario->getLastId();
+                mensagem::setSucesso("Criado com Sucesso");
+                return $usuario->getLastId();
             }
             else {
-                mensagem::setErro($Mensagems);
+                mensagem::setErro("Erro ao excultar ação tente novamente");
                 return False;
             }
         }

@@ -3,6 +3,7 @@ namespace app\controllers\api;
 use app\classes\controllerAbstract;
 use app\models\main\usuarioModel;
 use app\classes\mensagem;
+use Exception;
 
 class usuarioController extends controllerAbstract{
 

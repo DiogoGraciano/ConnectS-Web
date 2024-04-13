@@ -1,5 +1,7 @@
 <?php 
 namespace app\models\main;
+
+use app\classes\functions;
 use app\db\agenda;
 use app\classes\mensagem;
 
@@ -37,9 +39,39 @@ class agendaModel{
 
         $agenda = new agenda;
 
+        if (!clienteModel::get($cd_cliente)->cd_cliente){
+            mensagem::setErro("Cliente não existe");
+            return False;
+        }
+
+        if (!funcionarioModel::get($cd_funcionario)->cd_funcionario){
+            mensagem::setErro("Funcionario não existe");
+            return False;
+        }
+
+        if (!$dt_inicio = functions::dateTimeBd($dt_inicio)){
+            mensagem::setErro("Data Inicial informada invalida");
+            return False;
+        }
+
+        if (!$dt_fim = functions::dateTimeBd($dt_fim)){
+            mensagem::setErro("Data Final informada invalida");
+            return False;
+        }
+
+        if (!$titulo || !$status){
+            mensagem::setErro("Um dos campos obrigatorios *Titulo* ou *Status* não foi informado");
+            return False;
+        }
+
         if($cd_agenda && $cd_cliente && $cd_funcionario && $titulo && $dt_inicio && $dt_fim && $status){
         
-            $values = $agenda->getObject();
+            $values = self::get($cd_agenda);
+
+            if (!$values->cd_agenda){
+                mensagem::setErro("Agendamento não existe");
+                return false;
+            }
 
             $values->cd_agenda = $cd_agenda;
             $values->cd_cliente = $cd_cliente;
@@ -51,8 +83,7 @@ class agendaModel{
             $values->obs= $obs;
             $values->status = $status;
 
-            if ($values)
-                $retorno = $agenda->store($values);
+            $retorno = $agenda->store($values);
 
             if ($retorno == true){
                 mensagem::setSucesso("Atualizado com Sucesso");
@@ -76,8 +107,7 @@ class agendaModel{
             $values->obs= $obs;
             $values->status = $status;
 
-            if ($values)
-                $retorno = $agenda->store($values);
+            $retorno = $agenda->store($values);
 
             if ($retorno == true){
                 mensagem::setSucesso("Criado com Sucesso");

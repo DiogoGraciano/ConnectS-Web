@@ -163,6 +163,7 @@ class elements extends pagina{
             $tpl->block("BLOCK_LABEL_DATALIST");  
         }
         $tpl->nm_input = $nm_input;
+        $tpl->vl_input = $vl_option;
         if($required && !$vl_option)
             $class_input .= " is-invalid";
         $tpl->class_input = $class_input;

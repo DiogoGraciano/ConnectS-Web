@@ -1,6 +1,5 @@
 <?php
 namespace app\classes;
-use app\db\LoginApi;
 
 abstract class controllerAbstract{
 
@@ -43,10 +42,6 @@ abstract class controllerAbstract{
         }
 
         return $return;
-    }
-
-    public function validateUserApi($usuario,$senha){
-        return (new LoginApi)->selectByValues(["usuario","senha"],[$usuario,$senha]);
     }
 
     public function go($caminho){

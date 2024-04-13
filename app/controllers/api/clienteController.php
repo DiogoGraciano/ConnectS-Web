@@ -2,6 +2,7 @@
 namespace app\controllers\api;
 use app\classes\controllerAbstract;
 use app\models\main\clienteModel;
+use Exception;
 
 class clienteController extends controllerAbstract{
 

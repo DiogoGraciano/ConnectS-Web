@@ -3,6 +3,7 @@ namespace app\controllers\api;
 use app\classes\controllerAbstract;
 use app\models\main\conexaoModel;
 use app\classes\mensagem;
+use Exception;
 
 class conexaoController extends controllerAbstract{
 
@@ -67,14 +68,14 @@ class conexaoController extends controllerAbstract{
                     if (isset($registro["cd_conexao"],$registro["cd_cliente"],$registro["id_conexao"],$registro["nm_terminal"],$registro["nm_programa"])){
                         $registro = $this->setParameters($columns,$registro);
                         if ($id = conexaoModel::set(...$registro)){
-                            $result[] = "Ramal com Id ({$id}) atualizado com sucesso";
+                            $result[] = "funcionario com Id ({$id}) atualizado com sucesso";
                         }
                         else{
                             $errors[] = mensagem::getErro();
                         }
                     }
                     else
-                        $errors[] = "Ramal não Informado corretamente";
+                        $errors[] = "funcionario não Informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }
@@ -84,14 +85,14 @@ class conexaoController extends controllerAbstract{
                     if (isset($registro["cd_cliente"],$registro["id_conexao"],$registro["nm_terminal"],$registro["nm_programa"])){
                         $registro = $this->setParameters($columns,$registro);
                         if ($id = conexaoModel::set(...$registro)){
-                            $result[] = "Ramal com Id ({$id}) inserido com sucesso";
+                            $result[] = "funcionario com Id ({$id}) inserido com sucesso";
                         }
                         else{
                             $errors[] = mensagem::getErro();
                         }
                     }
                     else
-                        $errors[] = "Ramal não Informado corretamente";
+                        $errors[] = "funcionario não Informado corretamente";
                 }
                 echo json_encode(["result" => $result, "errors" => $errors]);
             }else{

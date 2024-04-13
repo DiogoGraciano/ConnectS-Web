@@ -1,52 +1,49 @@
 <?php 
 namespace app\models\main;
-use app\db\login;
+use app\db\loginApi;
 use app\classes\mensagem;
 use stdClass;
 
-class loginModel{
+class loginApiModel{
 
     public static function login($nm_usuario,$senha){
-        $login = new login;
+        $login = new loginApi;
         $login = $login->get($nm_usuario,"nm_usuario");
 
         if ($login && password_verify($senha,$login->senha)){
-                $_SESSION["user"] = $login->cd_login;
-                $_SESSION["nome"] = $login->nm_usuario;
                 return True;
         }
 
-        mensagem::setErro("Usuario ou Senha invalido");
         return False;
     }
 
     public static function get($cd){
-        return (new login)->get($cd); 
+        return (new loginApi)->get($cd); 
     }
 
     public static function getAll(){
-        return (new login)->selectColumns("cd_login","nm_usuario"); 
+        return (new loginApi)->selectColumns("cd_login_api","nm_usuario"); 
     }
 
-    public static function set($nm_usuario,$senha,$cd_login = ""){
+    public static function set($nm_usuario,$senha,$cd_login_api = ""){
 
-        $login = new login;
+        $login = new loginApi;
 
         if(!$nm_usuario){
             mensagem::setErro("Nome do Usuario é obrigatorio");
             return false;
         }
 
-        if ($login->get($nm_usuario,"nm_usuario")->cd_login){
+        if ($login->get($nm_usuario,"nm_usuario")->cd_login_api){
             mensagem::setErro("Nome do Usuario já utilizado");
             return false;
         }
 
-        if($cd_login && $nm_usuario){
+        if($cd_login_api && $nm_usuario){
 
-            $values = $login->getObject();
+            $values = new stdClass;
 
-            $values->cd_login = $cd_login;
+            $values->cd_login_api = $cd_login_api;
             $values->nm_usuario= $nm_usuario;
             if($senha){
                 $values->senha = password_hash($senha,PASSWORD_DEFAULT);
@@ -64,21 +61,18 @@ class loginModel{
             }
 
         }
-        elseif(!$cd_login && $nm_usuario && $senha){
+        elseif(!$cd_login_api && $nm_usuario && $senha){
 
             if(!$senha){
                 mensagem::setErro("Senha é obrigatorio");
                 return false;
             }
 
-            $values = $login->getObject();
-
-            $values->cd_login = $cd_login;
+            $values = new stdClass;
             $values->nm_usuario= $nm_usuario;
-            $values->senha = password_hash($senha,PASSWORD_DEFAULT);;
+            $values->senha = password_hash($senha,PASSWORD_DEFAULT);
             
-            if ($values)
-                $retorno = $login->store($values);
+            $retorno = $login->store($values);
 
             if ($retorno == true){
                 mensagem::setSucesso("Criado com Sucesso");
@@ -96,11 +90,7 @@ class loginModel{
     }
 
     public static function delete($cd){
-        return (new login)->delete($cd);
-    }
-
-    public static function deslogar(){
-        session_destroy();
+        return (new loginApi)->delete($cd);
     }
 
 }

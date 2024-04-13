@@ -1,10 +1,7 @@
 <?php 
 namespace app\controllers\api;
-
-use app\classes\functions;
 use app\classes\controllerAbstract;
-use app\classes\mensagem;
-use app\models\main\clienteModel;
+use app\models\main\loginApiModel;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -20,7 +17,7 @@ class apiV1Controller extends controllerAbstract{
             die;
         }
 
-        if (!$this->validateUserApi($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW'])){
+        if (!loginApiModel::login($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW'])){
             echo json_encode(['error' => "Token invalido","result" => false]);
             http_response_code(400);
             die;
@@ -42,8 +39,8 @@ class apiV1Controller extends controllerAbstract{
         }
     }
 
-    public function ramal($parameters){
-        if (array_key_exists(0,$parameters) && method_exists($class = new ramalController($this->requestType,$this->data),$method = $parameters[0])){
+    public function funcionario($parameters){
+        if (array_key_exists(0,$parameters) && method_exists($class = new funcionarioController($this->requestType,$this->data),$method = $parameters[0])){
             unset($parameters[0]);
             $class->$method($parameters);
         }

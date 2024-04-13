@@ -7,16 +7,28 @@ use app\classes\footer;
 use app\classes\elements;
 use app\classes\controllerAbstract;
 use app\classes\functions;
+use app\classes\filter;
 use app\models\main\clienteModel;
 
 class clienteController extends controllerAbstract{
 
     public function index(){
 
+        $nm_cliente = $this->getValue("nm_cliente");
+        $nr_loja = $this->getValue("nr_loja");
+
         $head = new head();
         $head->show("Manutenção Agenda","consulta","Cliente");
 
         $elements = new elements();
+
+        $filter = new filter($this->url."cliente/index/");
+
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"))
+                ->addFilter(3,$elements->input("nm_cliente","Nome Cliente",$nm_cliente))
+                ->addFilter(3,$elements->input("nrloja","Loja:",$nr_loja,false,false,"","number","form-control",'min="1"'));
+
+        $filter->show();
 
         $consulta = new consulta();
         $consulta->addButtons($elements->button("Voltar","btn_voltar","button",
@@ -25,7 +37,7 @@ class clienteController extends controllerAbstract{
         "btn btn-secondary pt-2","location.href='".$this->url."cliente/export'"));
         $consulta->addColumns("10","ID","cd_cliente")->addColumns("67","Nome","nm_cliente")->addColumns("10","Loja","nr_loja")->addColumns("13","Ações","");
         
-        $consulta->show($this->url."cliente/manutencao",$this->url."cliente/action",clienteModel::getAll(),"cd_cliente");
+        $consulta->show($this->url."cliente/manutencao",$this->url."cliente/action",clienteModel::getAll($nm_cliente,$nr_loja),"cd_cliente");
     
         $footer = new footer;
         $footer->show();

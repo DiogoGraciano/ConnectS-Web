@@ -273,7 +273,7 @@ class Db extends ConfigDB
         try {
             if ($values) {
                 $values = (array)$values;
-                if (!$values[$this->columns[0]]) {
+                if (!isset($values[$this->columns[0]]) || !$values[$this->columns[0]]) {
                     $values[$this->columns[0]] = $this->getlastIdBd() + 1;
                     $sql_instruction = "INSERT INTO " . $this->table . "(";
                     $keysBD = "";
@@ -295,7 +295,7 @@ class Db extends ConfigDB
                     $valuesBD = substr($valuesBD, 0, -1);
                     $sql_instruction .= $valuesBD;
                     $sql_instruction .= ");";
-                } elseif ($values[$this->columns[0]]) {
+                } elseif ($values[$this->columns[0]] && $values[$this->columns[0]]) {
                     $sql_instruction = "UPDATE " . $this->table . " SET ";
                     foreach ($values as $key => $data) {
                         if ($key == $this->columns[0])

@@ -7,15 +7,32 @@ use app\classes\controllerAbstract;
 use app\classes\footer;
 use app\classes\elements;
 use app\classes\functions;
+use app\classes\filter;
 use app\models\main\conexaoModel;
 
 class conexaoController extends controllerAbstract{
 
     public function index(){
+
+        $nm_cliente = $this->getValue("nm_cliente");
+        $nm_terminal = $this->getValue("nm_terminal");
+        $nm_programa = $this->getValue("nm_programa");
+        $nm_usuario = $this->getValue("nm_usuario");
+
         $head = new head();
         $head -> show("Conexão","consulta","Conexão");
 
         $elements = new elements();
+
+        $filter = new filter($this->url."conexao/index/");
+
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"))
+                ->addFilter(3,$elements->input("nm_cliente","Nome Cliente",$nm_cliente))
+                ->addFilter(3,$elements->input("nm_terminal","Terminal",$nm_terminal))
+                ->addFilter(3,$elements->input("nm_programa","Sistema",$nm_programa))
+                ->addFilter(3,$elements->input("nm_usuario","Usuario",$nm_usuario));
+
+        $filter->show();
         
         $consulta = new consulta();
         $consulta->addButtons($elements->button("Voltar","btn_submit","button","btn btn-dark pt-2","location.href='".$this->url."home'"))
@@ -34,7 +51,7 @@ class conexaoController extends controllerAbstract{
                 ->addColumns("10","OBSERVAÇÕES","obs")
                 ->addColumns("12.5","AÇÕES","");
 
-        $consulta->show($this->url."conexao/manutencao",$this->url."conexao/action",conexaoModel::getAll(),"cd_conexao");
+        $consulta->show($this->url."conexao/manutencao",$this->url."conexao/action",conexaoModel::getAll($nm_cliente,$nm_terminal,$nm_programa,$nm_usuario),"cd_conexao");
 
         $footer = new footer;
         $footer->show();

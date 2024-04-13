@@ -14,15 +14,23 @@ class usuarioController extends controllerAbstract{
 
     public function index(){
 
+        $nm_cliente = $this->getValue("nm_cliente");
+        $nm_terminal = $this->getValue("nm_terminal");
+        $nm_sistema = $this->getValue("nm_sistema");
+        $nm_usuario = $this->getValue("nm_usuario");
+        
         $head = new head();
         $head->show("Usuario","consulta","Consulta Usuario");
 
         $elements = new elements();
 
-        $filter = new filter($this->url."usuario/filter/");
-        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
+        $filter = new filter($this->url."usuario/index/");
 
-        $filter->addFilter(6,$elements->input("cliente","Nome Cliente"));
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"))
+                ->addFilter(3,$elements->input("nm_cliente","Nome Cliente",$nm_cliente))
+                ->addFilter(3,$elements->input("nm_terminal","Terminal",$nm_terminal))
+                ->addFilter(3,$elements->input("nm_sistema","Sistema",$nm_sistema))
+                ->addFilter(3,$elements->input("nm_usuario","Usuario",$nm_usuario));
 
         $filter->show();
     
@@ -40,7 +48,7 @@ class usuarioController extends controllerAbstract{
                 ->addColumns("10","OBSERVAÇÕES","obs")
                 ->addColumns("12.5","AÇÕES","");
         
-        $consulta->show($this->url."usuario/manutencao",$this->url."usuario/action",usuarioModel::getAll(),"cd_usuario");
+        $consulta->show($this->url."usuario/manutencao",$this->url."usuario/action",usuarioModel::getAll($nm_cliente,$nm_terminal,$nm_sistema,$nm_usuario),"cd_usuario");
 
         $footer = new footer;
         $footer->show();
@@ -55,7 +63,7 @@ class usuarioController extends controllerAbstract{
         $head = new head;
         $head->show("Manutenção Usuario");
 
-        $dado = usuarioModel::get($cd);
+        $dado = usuarioModel::get(functions::decrypt($cd));
 
         $elements = new elements();
 
@@ -109,7 +117,7 @@ class usuarioController extends controllerAbstract{
             return;
         }
         
-        $cd = $this->getValue('cd');
+        $cd = functions::decrypt($this->getValue('cd'));
         $cd_cliente = $this->getValue('cd_cliente');
         $nm_terminal = $this->getValue('nm_terminal');
         $nm_sistema = $this->getValue('nm_sistema');

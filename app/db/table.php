@@ -101,12 +101,12 @@ class conexao extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
-class ramal extends db{
+class funcionario extends db{
     public function __construct(){
-        parent::__construct("tb_ramal");
+        parent::__construct("tb_funcionario");
     }
 
-    public function get($value="",$column="cd_ramal"){
+    public function get($value="",$column="cd_funcionario"){
         $retorno = [];
 
         if ($value)
@@ -122,7 +122,7 @@ class ramal extends db{
         return $this->selectAll();
     }
 
-    public function delete($value,$column="cd_ramal"){
+    public function delete($value,$column="cd_funcionario"){
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
@@ -151,7 +151,7 @@ class usuario extends db{
         return $this->addFilter($column,"=",$value)->deleteByFilter();
     }
 }
-class LoginApi extends db{
+class loginApi extends db{
     public function __construct(){
         parent::__construct("tb_login_api");
     }

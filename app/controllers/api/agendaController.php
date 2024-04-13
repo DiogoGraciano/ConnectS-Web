@@ -3,6 +3,7 @@ namespace app\controllers\api;
 use app\classes\controllerAbstract;
 use app\models\main\agendaModel;
 use app\classes\mensagem;
+use Exception;
 
 class agendaController extends controllerAbstract{
 
@@ -70,7 +71,7 @@ class agendaController extends controllerAbstract{
                             $result[] = "agenda com Id ({$agenda}) atualizado com sucesso";
                         }
                         else{
-                            $errors[] = "agenda não atualizado";
+                            $errors[] = mensagem::getErro();
                         }
                     }
                     else
@@ -87,7 +88,7 @@ class agendaController extends controllerAbstract{
                             $result[] = "agenda com Id ({$agenda}) inserido com sucesso";
                         }
                         else{
-                            $errors[] = "agenda não inserido, verifique se o nome do agenda ja está cadastrado";
+                            $errors[] = mensagem::getErro();
                         }
                     }
                     else
