@@ -91,7 +91,7 @@ class usuarioController extends controllerAbstract{
      * Insere ou atualiza usuários.
      *
      */
-    public function set($parameters){
+    public function set(){
         try {
             $errors = [];
             $result = []; 
