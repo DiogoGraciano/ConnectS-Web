@@ -4,6 +4,7 @@ use app\classes\head;
 use app\classes\form;
 use app\classes\consulta;
 use app\classes\controllerAbstract;
+use app\classes\filter;
 use app\classes\footer;
 use app\classes\elements;
 use app\classes\functions;
@@ -17,6 +18,13 @@ class usuarioController extends controllerAbstract{
         $head->show("Usuario","consulta","Consulta Usuario");
 
         $elements = new elements();
+
+        $filter = new filter($this->url."usuario/filter/");
+        $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"));
+
+        $filter->addFilter(6,$elements->input("cliente","Nome Cliente"));
+
+        $filter->show();
     
         $consulta = new consulta();
         $consulta->addButtons($elements->button("Voltar","btn_voltar","button","btn btn-dark pt-2","location.href='".$this->url."home'"))
