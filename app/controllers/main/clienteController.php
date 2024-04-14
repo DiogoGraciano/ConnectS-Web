@@ -30,7 +30,7 @@ class clienteController extends controllerAbstract{
 
         $filter->addbutton($elements->button("Buscar","buscar","submit","btn btn-primary pt-2"))
                 ->addFilter(3,$elements->input("nm_cliente","Nome Cliente",$nm_cliente))
-                ->addFilter(3,$elements->input("nrloja","Loja:",$nr_loja,false,false,"","number","form-control",'min="1"'));
+                ->addFilter(3,$elements->input("nr_loja","Loja:",$nr_loja,false,false,"","number","form-control",'min="1"'));
 
         $filter->show();
 

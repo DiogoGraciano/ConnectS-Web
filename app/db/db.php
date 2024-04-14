@@ -1,7 +1,6 @@
 <?php
 namespace app\db;
 use app\db\configDB;
-use app\classes\logger;
 
 /**
  * Classe base para interação com o banco de dados.
@@ -79,6 +78,20 @@ class Db extends ConfigDB
     private $counterBind = 1;
 
     /**
+     * Constante do operado AND.
+     *
+     * @var string
+    */
+    const AND = "AND";
+
+    /**
+     * Constante do operado OR.
+     *
+     * @var string
+    */
+    const OR = "OR";
+
+    /**
      * Construtor da classe.
      * 
      * @param string $table Nome da tabela do banco de dados.
@@ -109,7 +122,6 @@ class Db extends ConfigDB
             return True;
        
         $this->error[] = "Erro: Não foi possível iniciar a transação";
-        Logger::error('Tabela: '.$this->table.' Erro: Não foi possível iniciar a transação');
     }
 
     /**
@@ -122,7 +134,6 @@ class Db extends ConfigDB
             return True;
          
         $this->error[] = "Erro: Não foi possível finalizar a transação";
-        Logger::error('Tabela: '.$this->table.' Erro: Não foi possível finalizar a transação');
     }
 
     /**
@@ -135,7 +146,6 @@ class Db extends ConfigDB
             return True;
         
         $this->error[] = "Erro: Não foi possível desfazer a transação";
-        Logger::error('Tabela: '.$this->table.' Erro: Não foi possível desfazer a transação');
     }
 
     /**
@@ -160,7 +170,6 @@ class Db extends ConfigDB
         } 
 
         $this->error[] = "Erro: Tabela não encontrada";
-        Logger::error('Tabela: '.$this->table.' Erro: Tabela não encontrada');
     }
 
     /**
@@ -225,8 +234,6 @@ class Db extends ConfigDB
         } 
 
         $this->error[] = "Erro: Tabela não encontrada";
-        Logger::error('Tabela: '.$this->table.' Erro: Tabela não encontrada');
-
         return false;
     }
 
@@ -255,7 +262,6 @@ class Db extends ConfigDB
             return $rows;
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
-            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
     
@@ -393,7 +399,6 @@ class Db extends ConfigDB
         } 
         
         $this->error[] = "Erro: Quantidade de colunas diferente do total de Valores";
-        Logger::error('Tabela: '.$this->table.' Erro: Quantidade de colunas diferente do total de Valores');
     }
 
     /**
@@ -468,13 +473,10 @@ class Db extends ConfigDB
                 return true;
             }
             $this->error[] = "Erro: Valores não informados";
-            Logger::error('Tabela: '.$this->table.' Erro: Valores não informados');
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
-            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
-    }
-
+    }    
     /**
      * Salva um registro na tabela com múltiplas chaves primárias.
      * 
@@ -517,7 +519,6 @@ class Db extends ConfigDB
             }
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: '.$e->getMessage();
-            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
 
@@ -537,10 +538,8 @@ class Db extends ConfigDB
                 return true;
             }
             $this->error[] = 'Tabela: '.$this->table.' Erro: ID Invalido';
-            Logger::error('Tabela: '.$this->table.' Erro: ID Invalido');
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
-            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
         return false;
     }
@@ -573,12 +572,10 @@ class Db extends ConfigDB
                 return true;
             }
             $this->error[] = 'Tabela: '.$this->table.' Erro: Obrigatorio Uso de filtro';
-            Logger::error('Tabela: '.$this->table.' Erro: Obrigatorio Uso de filtro');
             return false;
 
         } catch (\Exception $e) {
             $this->error[] = 'Tabela: '.$this->table.' Erro: ' .  $e->getMessage();
-            Logger::error('Tabela: '.$this->table.' Erro: ' .  $e->getMessage());
         }
     }
 
@@ -591,7 +588,7 @@ class Db extends ConfigDB
      * @param string $operator Operador lógico (AND ou OR).
      * @return db Retorna a instância atual da classe.
      */
-    public function addFilter(string $column,string $condition,$value,string $operator="AND"){
+    public function addFilter(string $column,string $condition,$value,string $operator=DB::AND){
         
         if (is_string($value))
             $this->valuesBind[$this->counterBind] = [$value,\PDO::PARAM_STR];
