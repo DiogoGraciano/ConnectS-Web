@@ -2,8 +2,15 @@
 namespace app\models\main;
 use app\db\login;
 use app\classes\mensagem;
-use stdClass;
 
+/**
+ * Classe loginModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados dos usuarios da plataforma.
+ * Ela utiliza a classe login para realizar operações de consulta no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class loginModel{
 
     /**

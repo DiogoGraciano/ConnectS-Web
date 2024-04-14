@@ -3,6 +3,14 @@ namespace app\models\main;
 use app\db\conexao;
 use app\classes\mensagem;
 
+/**
+ * Classe conexaoModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados das conexões.
+ * Ela utiliza a classe conexao para realizar operações de consulta no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class conexaoModel{
 
     /**
@@ -63,11 +71,26 @@ class conexaoModel{
      */
     public static function set(string|int $cd_cliente,string $id_conexao,string $nm_terminal,string $nm_programa,string|int $nr_caixa,string $nm_usuario,string $senha,string $obs,string|int $cd_conexao = ""){
 
+        if (!clienteModel::get($cd_cliente)->cd_cliente){
+            mensagem::setErro("Cliente não existe");
+            return False;
+        }
+
+        if (!$id_conexao || !$nm_terminal || !$nm_programa){
+            mensagem::setErro("Um dos campos obrigatorios *Conexão* ou *Terminal* ou *Programa* não informado");
+            return False;
+        }
+
         $conexao = (new conexao);
 
         if($cd_conexao && $cd_cliente && $id_conexao && $nm_terminal && $nm_programa){
         
-            $values = $conexao->getObject();
+            $values = self::get($cd_conexao);
+
+            if (!$values->cd_agenda){
+                mensagem::setErro("Agendamento não existe");
+                return false;
+            }
 
             $values->cd_conexao = $cd_conexao;
             $values->cd_cliente = $cd_cliente;
@@ -93,6 +116,7 @@ class conexaoModel{
 
         }
         elseif(!$cd_conexao && $cd_cliente && $id_conexao && $nm_terminal && $nm_programa){
+            
             $values = $conexao->getObject();
 
             $values->cd_cliente = $cd_cliente;

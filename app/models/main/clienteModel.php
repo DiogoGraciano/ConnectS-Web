@@ -3,6 +3,14 @@ namespace app\models\main;
 use app\db\cliente;
 use app\classes\mensagem;
 
+/**
+ * Classe clienteModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados dos clientes.
+ * Ela utiliza a classe cliente para realizar operações de consulta no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class clienteModel{
 
     /**
@@ -50,7 +58,12 @@ class clienteModel{
 
         if($cd && $nome && $nrloja){
  
-            $values = $cliente->getObject();
+            $values = self::get($cd);
+
+            if(!$values->cd_cliente){
+                mensagem::setErro("Cliente não existe");
+                return false;
+            }
 
             $values->cd_cliente = $cd;
             $values->nm_cliente= $nome;
@@ -70,6 +83,7 @@ class clienteModel{
 
         }
         elseif(!$cd && $nome && $nrloja){
+
             $values = $cliente->getObject();
 
             $values->nm_cliente= $nome;

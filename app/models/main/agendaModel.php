@@ -5,6 +5,14 @@ use app\classes\functions;
 use app\db\agenda;
 use app\classes\mensagem;
 
+/**
+ * Classe agendaModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados dos agendamentos.
+ * Ela utiliza a classe agenda para realizar operações de consulta no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class agendaModel{
 
     /**

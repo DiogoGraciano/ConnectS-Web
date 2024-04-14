@@ -74,8 +74,13 @@ class usuarioModel{
         }
 
         if($cd && $cd_cliente && $nm_terminal && $nm_sistema && $nm_usuario && $senha){
-        
-            $values = $usuario->getObject();
+
+            $values = self::get($cd);
+
+            if(!$values->cd_usuario){
+                mensagem::setErro("Usuario não existe");
+                return false;
+            }
 
             $values->cd_usuario = $cd;
             $values->cd_cliente = $cd_cliente;
@@ -130,7 +135,7 @@ class usuarioModel{
      * @param string|int $cd Código do registro a ser deletado.
      */
     public static function delete(string|int $cd){
-        (new usuario)->delete($cd);
+        return (new usuario)->delete($cd);
     }
 
     /**

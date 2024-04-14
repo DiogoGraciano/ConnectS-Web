@@ -4,6 +4,14 @@ use app\db\loginApi;
 use app\classes\mensagem;
 use stdClass;
 
+/**
+ * Classe loginApiModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados dos usuarios da api.
+ * Ela utiliza a classe loginApi para realizar operações de consulta no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class loginApiModel{
 
     /**

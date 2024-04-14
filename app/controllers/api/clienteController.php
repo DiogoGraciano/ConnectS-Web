@@ -2,6 +2,7 @@
 namespace app\controllers\api;
 
 use app\classes\controllerAbstract;
+use app\classes\mensagem;
 use app\models\main\clienteModel;
 use Exception;
 
@@ -101,7 +102,7 @@ class clienteController extends controllerAbstract{
                             $result[] = "Cliente com Id ({$cliente}) atualizado com sucesso";
                         }
                         else{
-                            $errors[] = "Cliente não atualizado";
+                            $errors[] = mensagem::getErro();
                         }
                     }
                     else
@@ -116,7 +117,7 @@ class clienteController extends controllerAbstract{
                             $result[] = "Cliente com Id ({$cliente}) inserido com sucesso";
                         }
                         else{
-                            $errors[] = "Cliente não inserido, verifique se o nome do cliente já está cadastrado";
+                            $errors[] = mensagem::getErro();
                         }
                     }
                     else

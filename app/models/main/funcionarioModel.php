@@ -1,16 +1,41 @@
-<?php 
+<?php
 namespace app\models\main;
+
 use app\db\funcionario;
 use app\classes\mensagem;
 use app\classes\functions;
 
+/**
+ * Classe funcionarioModel
+ * 
+ * Esta classe fornece métodos para interagir com os dados dos funcionários.
+ * Ela utiliza a classe funcionario para realizar operações de consulta no banco de dados.
+ * 
+ * @package app\models\main
+ */
 class funcionarioModel{
 
+    /**
+     * Obtém um funcionário pelo código.
+     * 
+     * @param string $cd O código do funcionário a ser buscado.
+     * @return object Retorna os dados do funcionário ou null se não encontrado.
+     */
     public static function get($cd=""){
         return (new funcionario)->get($cd);
     }
 
-    public static function getAll($nm_funcionario,$nr_ramal,$nr_telefone,$nr_ip,$nm_usuario){
+    /**
+     * Obtém todos os funcionários com base nos filtros fornecidos.
+     * 
+     * @param string $nm_funcionario O nome do funcionário para filtrar.
+     * @param string $nr_ramal O número do ramal para filtrar.
+     * @param string $nr_telefone O número do telefone para filtrar.
+     * @param string|int $nr_ip O número do IP para filtrar.
+     * @param string $nm_usuario O nome do usuário para filtrar.
+     * @return array Retorna um array de funcionários filtrados.
+     */
+    public static function getAll(string $nm_funcionario="",string|int $nr_ramal="",string $nr_telefone="",string $nr_ip="",string $nm_usuario=""){
         $funcionario = new funcionario;
 
         if($nm_funcionario){
