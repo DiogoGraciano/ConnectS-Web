@@ -9,3 +9,5 @@ MySQL versão >= 8.0
 Após configurar o servidor, é necessário importar o banco de dados que se encontra na raiz do projeto para o MySQL.
 
 Haverá um usuário ADMIN cadastrado com a senha 154326. Utilizando este usuário, você poderá cadastrar novos usuários e também criar usuários para a API.
+
+Documentação da API: https://documenter.getpostman.com/view/34101425/2sA3Bj7DS9
